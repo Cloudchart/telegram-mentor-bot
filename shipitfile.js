@@ -5,6 +5,7 @@ var path = require('path')
 module.exports = function(shipit) {
   require('shipit-deploy')(shipit)
   require('shipit-shared')(shipit)
+  require('shipit-npm')(shipit)
 
   const HOME_PATH = '/home/app/mentor-telegram-bot'
 
@@ -13,14 +14,9 @@ module.exports = function(shipit) {
     default: {
       shared: {
         overwrite: true,
-        dirs: [
-          'node_modules',
-          'logs'
-        ],
         files: [
           '.env'
         ],
-        triggerEvent: 'npmUpdated'
       },
 
       bot: {
@@ -33,7 +29,7 @@ module.exports = function(shipit) {
       servers: 'app@mentor1.cochart.net',
       workspace: '/tmp/mentor-telegram-bot-deploy',
       deployTo: HOME_PATH,
-      repositoryUrl: 'git@github.com:Cloudchart/mentor-web-app.git',
+      repositoryUrl: 'git@github.com:Cloudchart/telegram-mentor-bot.git',
       shallowClone: false,
     },
 
