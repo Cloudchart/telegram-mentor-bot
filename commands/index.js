@@ -1,0 +1,20 @@
+import start from './start'
+import advice from './advice'
+import subscribe from './subscribe'
+import start_time from './start_time'
+import finish_time from './finish_time'
+import local_time from './local_time'
+import location from './location'
+
+export default {
+  '/start': start,
+
+  '/advice': advice,
+  'advice': advice,
+
+  'subscribe': subscribe,
+  'start_time': start_time,
+  'finish_time': finish_time,
+  'local_time': local_time,
+  'location': location,
+}

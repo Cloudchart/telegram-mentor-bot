@@ -1,0 +1,9 @@
+{
+  "plugins": [
+    "./scripts/babel-relay-plugin"
+  ],
+  "presets": [
+    "es2015",
+    "stage-0",
+  ]
+}
