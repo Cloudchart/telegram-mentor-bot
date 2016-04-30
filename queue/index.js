@@ -19,7 +19,7 @@ Object.keys(tasks).forEach(name => {
 
 let start = async () => {
   try {
-    let users = JSON.parse(await redis.get('users'))
+    let users = JSON.parse(await redis.get('users')) || []
 
     users.forEach(async id => {
       let user = await User({ id })

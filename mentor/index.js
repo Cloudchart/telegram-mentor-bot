@@ -114,7 +114,7 @@ class Mentor {
   mutate = (name, payload) => this._request(mutations[name](payload))
 
   _request = (query, variables) =>
-    fetch('http://mentor.dev/graphql', {
+    fetch(process.env.MENTOR_GRAPHQL_URL, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
