@@ -1,34 +1,10 @@
-import moment from 'moment'
 import chalk from 'chalk'
 import User from '../../user'
 
-
-let insightOriginResponse = ({ author, title, url, duration }) => {
-  let humanizedDuration = moment.duration(duration, 'seconds').humanize() + ' read'
-  let humanizedOrigin = [author, title, humanizedDuration].filter(i => !!i).join(', ')
-  return `
-    [${humanizedOrigin}](${url.trim()})
-  `
-}
-
-
-let insightResponse = ({ content, origin }) => {
-  return `
-    ${content}
-    ${insightOriginResponse(origin)}
-  `
-}
-
-let insightMarkup = () => ({
-  reply_markup: {
-    inline_keyboard: [[
-      { text: 'Dislike', callback_data: 'dislike' },
-      { text: 'Like', callback_data: 'like' }
-    ]]
-  },
-  hide_keyboard: true,
-  disable_web_page_preview: true,
-})
+import {
+  insightResponse,
+  insightMarkup,
+} from './utils'
 
 
 let perform = async (job, done) => {

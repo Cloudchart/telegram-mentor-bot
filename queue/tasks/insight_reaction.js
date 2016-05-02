@@ -55,11 +55,16 @@ let perform = async (job, done) => {
 
     user.setState({ insights })
 
-    let replyMarkup = type === 'force'
-      ? forceReplyMarkup(rate)
-      : scheduleReplyMarkup(rate)
+    let replyMarkup = type === 'schedule'
+      ? scheduleReplyMarkup(rate)
+      : forceReplyMarkup(rate)
 
     await user.updateMessageReplyMarkup(message_id, replyMarkup)
+
+    if (type === 'schedule')
+      await Queue.enqueue('scheduled_insight', {
+        user_id
+      })
 
   } catch (error) {
     console.error(chalk.green('Queue::InsightReaction'), chalk.red(error))
@@ -71,3 +76,5 @@ let perform = async (job, done) => {
 export default {
   perform
 }
+
+import Queue from '../../queue'
