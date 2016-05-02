@@ -60,8 +60,8 @@ let perform = async (user, value, options = {}) => {
     let client_time = moment(time, 'HH:mm').tz(TimeZone)
     console.log(local_time.format())
     console.log(client_time.format())
-    console.log(local_time.diff(client_time, 'hours') * 60)
-    let utc_offset = local_time.diff(client_time, 'hours') * 60 + local_time.utcOffset()
+    console.log(client_time.diff(local_time, 'hours') * 60)
+    let utc_offset = client_time.diff(local_time, 'hours') * 60 + local_time.utcOffset()
     user.setState({ utc_offset })
 
     await leave(user, options)
