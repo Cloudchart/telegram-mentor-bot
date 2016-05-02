@@ -62,6 +62,9 @@ let perform = async (user, value, options = {}) => {
   if (offset > 12)
     offset = 24 - offset
 
+  if (offset < -12)
+    offset = 24 + offset
+
   user.setState({ utc_offset: offset * 60 })
 
   await leave(user, options)
