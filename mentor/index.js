@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
 
 import mutations from './mutations'
+import queries from './queries'
 
 let mentors = []
 
@@ -112,6 +113,8 @@ class Mentor {
     this._request(dislikeInsightInTopic({ insight_id, topic_id }))
 
   mutate = (name, payload) => this._request(mutations[name](payload))
+
+  query = (name, variables) => this._request(queries[name], variables)
 
   _request = (query, variables) =>
     fetch(process.env.MENTOR_GRAPHQL_URL, {

@@ -198,6 +198,8 @@ class User {
     await this._topics(true)
   }
 
+  query = (name, variables) => this._mentor.query(name, variables)
+
   mutate = (name, payload) => this._mentor.mutate(name, payload)
 
   adviceForTopic = (topic) =>

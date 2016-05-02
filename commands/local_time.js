@@ -51,10 +51,11 @@ let perform = async (user, value, options = {}) => {
   let time = parseTime(value)
 
   if (!time)
-    return await user.reply(Responses.perform(user, value))
+    return await user.reply(Responses.perform_error(user, value))
 
   try {
-    let utc_offset = moment(time, 'HH:mm').diff(moment(), 'hours') * 60 + moment().utcOffset()
+    let local_time = moment.tz(process.env.TIME_ZONE || 'UTC')
+    let utc_offset = moment(time, 'HH:mm').diff(local_time, 'hours') * 60 + local_time.utcOffset()
     user.setState({ utc_offset })
 
     await leave(user, options)

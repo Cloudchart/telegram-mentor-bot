@@ -1,7 +1,6 @@
 import Redis from 'ioredis'
 import kue from 'kue'
 import chalk from 'chalk'
-import moment from 'moment'
 
 import User from '../user'
 import tasks from './tasks'
@@ -30,7 +29,7 @@ let start = async () => {
       Queue.delayed((error, ids) => {
         ids.forEach(id => {
           kue.Job.get(id, (error, job) => {
-            if (job.data.user_id !== user.id) return
+            if (job.data.user_id !== user.id || job.type !== 'insight_schedule') return
             has_delayed_job = true
           })
         })
@@ -38,7 +37,7 @@ let start = async () => {
 
       if (has_delayed_job) return
 
-
+      enqueue('schedule', { user_id: user.id })
 
     })
 
@@ -52,8 +51,11 @@ let refresh = () => start()
 
 
 let enqueue = (name, payload) => {
-  let job = Queue.create(name, payload).removeOnComplete(true)
-  return job.save()
+  let { __delay, ...restOfPayload } = payload
+  let job = Queue.create(name, restOfPayload)
+    .removeOnComplete(true)
+    .delay(__delay || 0)
+    .save()
 }
 
 

@@ -1,13 +1,21 @@
 import chalk from 'chalk'
 import User from '../../user'
 
-let replyMarkup = (rate, topic) => ({
+
+let forceReplyMarkup = (rate) => ({
   inline_keyboard: [[
     { text: rate === 1 ? '👍' : '👎', callback_data: rate === 1 ? 'like' : 'dislike' },
     { text: `More`, callback_data: 'next' }
   ]],
   disable_web_page_preview: rate === -1
 })
+
+let scheduleReplyMarkup = (rate) => ({
+  inline_keyboard: [[
+    { text: rate === 1 ? '👍' : '👎', callback_data: rate === 1 ? 'like' : 'dislike' },
+  ]]
+})
+
 
 let perform = async (job, done) => {
 
@@ -34,7 +42,7 @@ let perform = async (job, done) => {
       return done()
     }
 
-    let { topic_id, insight_id } = mutationPayload
+    let { topic_id, insight_id, type } = mutationPayload
 
     await user.mutate(
       rate == 1 ? 'likeInsightInTopic' : 'dislikeInsightInTopic', {
@@ -47,8 +55,11 @@ let perform = async (job, done) => {
 
     user.setState({ insights })
 
-    let topic = await user.topic(topic_id)
-    await user.updateMessageReplyMarkup(message_id, replyMarkup(rate, topic))
+    let replyMarkup = type === 'force'
+      ? forceReplyMarkup(rate)
+      : scheduleReplyMarkup(rate)
+
+    await user.updateMessageReplyMarkup(message_id, replyMarkup)
 
   } catch (error) {
     console.error(chalk.green('Queue::InsightReaction'), chalk.red(error))

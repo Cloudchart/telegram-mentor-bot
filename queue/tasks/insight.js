@@ -32,7 +32,7 @@ let insightMarkup = () => ({
 
 
 let perform = async (job, done) => {
-  let { user_id, topic_id } = job.data
+  let { user_id, topic_id, type } = job.data
 
   try {
 
@@ -47,7 +47,8 @@ let perform = async (job, done) => {
     let insights = { ...user.state.insights }
     insights[message.message_id] = {
       insight_id: insight.id,
-      topic_id
+      topic_id,
+      type
     }
     user.setState({ insights })
 
