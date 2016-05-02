@@ -1,5 +1,7 @@
 import moment from 'moment'
 
+const TimeZone = process.env.TIME_ZONE || 'UTC'
+
 let timeZone = (utcOffset) => {
   let sign  = utcOffset > 0 ? '+' : ''
   let hours = Math.floor(utcOffset / 60) || ''
@@ -54,8 +56,8 @@ let perform = async (user, value, options = {}) => {
     return await user.reply(Responses.perform_error(user, value))
 
   try {
-    let local_time = moment.tz(process.env.TIME_ZONE || 'UTC')
-    let utc_offset = moment(time, 'HH:mm').diff(local_time, 'hours') * 60 + local_time.utcOffset()
+    let local_time = moment.tz(TimeZone)
+    let utc_offset = moment(time, 'HH:mm').tz(TimeZone).diff(local_time, 'hours') * 60 + local_time.utcOffset()
     user.setState({ utc_offset })
 
     await leave(user, options)
