@@ -55,17 +55,16 @@ let perform = async (user, value, options = {}) => {
   if (!time)
     return await user.reply(Responses.perform_error(user, value))
 
-  try {
-    let local_time = moment.tz(TimeZone)
-    let client_time = moment(time, 'HH:mm').tz(TimeZone)
-    console.log(local_time.format())
-    console.log(client_time.format())
-    console.log(client_time.diff(local_time, 'hours') * 60)
-    let utc_offset = client_time.diff(local_time, 'hours') * 60 + local_time.utcOffset()
-    user.setState({ utc_offset })
+  let local_time = moment.startOf('hour')
+  let client_time = moment.utc(time, 'HH:mm').startOf('hour')
+  let offset = local_time.diff(client_time, 'hours')
 
-    await leave(user, options)
-  } catch(e) { console.log(e) }
+  if (offset > 12)
+    offset = 24 - offset
+
+  user.setState({ utc_offset: offset * 60 })
+
+  await leave(user, options)
 }
 
 
