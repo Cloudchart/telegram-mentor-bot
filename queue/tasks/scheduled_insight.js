@@ -17,9 +17,10 @@ let perform = async (job, done) => {
     let insightEdge = await user.query('SubscribedInsight').then(({viewer}) => viewer.insights.edges[0])
 
     if (!insightEdge) {
-      if (!user.state.schedule_done_sent)
+      if (!user.state.schedule_done_sent) {
         user.setState({ ...user.state, schedule_done_sent: true })
-      await user.reply(`That is all for now, Master!`)
+        await user.reply(`That is all for now, Master!`)
+      }
       return done()
     }
 
