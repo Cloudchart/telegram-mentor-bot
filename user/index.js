@@ -40,8 +40,7 @@ class User {
   }
 
   ensureState = async () => {
-    if (!this.state)
-      this.state = await JSON.parse(await redis.get(this._user.id)) || {}
+    this.state = await JSON.parse(await redis.get(this._user.id)) || {}
   }
 
   setState = (nextState) => {
