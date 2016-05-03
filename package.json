@@ -13,12 +13,14 @@
     "hashids": "^1.0.2",
     "ioredis": "^1.15.1",
     "kue": "^0.10.5",
+    "later": "^1.2.0",
     "moment": "^2.13.0",
     "moment-timezone": "^0.5.3",
     "node-fetch": "^1.5.1",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",
-    "react-relay": "^0.8.0"
+    "react-relay": "^0.8.0",
+    "schedulejs": "^0.6.3"
   },
   "devDependencies": {
     "shipit-deploy": "^2.1.3",
@@ -26,7 +28,8 @@
     "shipit-shared": "^4.4.1"
   },
   "scripts": {
-    "bot": "babel-node index"
+    "bot": "babel-node index",
+    "test": "babel-node test"
   },
   "author": "",
   "license": "ISC"

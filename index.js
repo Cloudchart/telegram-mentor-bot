@@ -24,9 +24,12 @@ let getUpdates = () => {
         }
         lastUpdateId = Math.max(lastUpdateId, update.id + 1)
       })
-      getUpdates()
+      return getUpdates()
     })
-    .catch((error) => getUpdates())
+    .catch((error) => {
+      console.log(error)
+      return getUpdates()
+    } )
 }
 
 Queue.start()

@@ -22,6 +22,7 @@ let perform = async (job, done) => {
 
     let insights = { ...user.state.insights }
     insights[message.message_id] = {
+      user_id: user_id,
       insight_id: insight.id,
       topic_id,
       type

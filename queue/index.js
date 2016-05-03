@@ -1,3 +1,4 @@
+import Bluebird from 'bluebird'
 import Redis from 'ioredis'
 import kue from 'kue'
 import chalk from 'chalk'
@@ -15,31 +16,66 @@ Object.keys(tasks).forEach(name => {
   Queue.process(name, tasks[name].perform)
 })
 
+// let promisifiedDelayedKueTasks = Bluebird.promisify(Queue.delayed)
+kue.Job.asyncGet = Bluebird.promisify(kue.Job.get)
 
 let start = async () => {
   try {
-    let users = JSON.parse(await redis.get('users')) || []
 
-    users.forEach(async id => {
-      let user = await User({ id })
-      if (!user.state.initialized) return
+    Queue.delayed((error, ids) => {
+      Promise.all(ids.map(id => kue.Job.asyncGet(id)))
+        .then(async jobs => {
+          jobs.forEach(job => job.remove())
 
-      let has_delayed_job = false
+          let users = JSON.parse(await redis.get('users')) || []
 
-      Queue.delayed((error, ids) => {
-        ids.forEach(id => {
-          kue.Job.get(id, (error, job) => {
-            if (job.data.user_id !== user.id || job.type !== 'insight_schedule') return
-            has_delayed_job = true
+          users.forEach(async id => {
+            let user = await User({ id })
+            if (!user.state.initialized) return
+            enqueue('schedule', { user_id: user.id })
           })
         })
-      })
-
-      if (has_delayed_job) return
-
-      enqueue('schedule', { user_id: user.id })
-
     })
+
+    // let users = JSON.parse(await redis.get('users')) || []
+    //
+    // users.forEach(async id => {
+    //   let user = await User({ id })
+    //   if (!user.state.initialized) return
+    //
+    //   Queue.delayed(async (error, ids) => {
+    //
+    //     let promises = ids.map(id => promisifiedGetKueJob(id))
+    //
+    //     Promise.all(promises).then(jobs => {
+    //       jobs.forEach()
+    //       console.log(jobs.map(job => job.type))
+    //       console.log('here')
+    //     })
+    //   })
+      // promisifiedDelayedKueTasks.then(ids => {
+      //   console.log(ids)
+      // }).catch(console.log)
+      // await promisifiedDelayedKueTasks((error, ids) => {
+      //   ids.forEach(async id => {
+      //     let job = await promisifiedGetKueJob(id)
+      //     console.log(job)
+      //     // kue.Job.get(id, (error, job) => {
+      //     //   if (job.data.user_id == user.id && job.type == 'schedule') {
+      //     //     job.remove()
+      //     //   }
+      //     // })
+      //   })
+      // })
+
+      //
+      // console.log(has_delayed_job)
+      //
+      // if (has_delayed_job) return
+      //
+      // enqueue('schedule', { user_id: user.id })
+
+    // })
 
   } catch (error) {
     console.error(chalk.green('Queue'), chalk.red(error))
