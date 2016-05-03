@@ -24,9 +24,6 @@ let perform = async (job, done) => {
   let finish_hours = finish_time.hours()
   let local_hours = local_time.hours()
 
-  if (start_hours > finish_hours)
-    finish_hours += 24
-
   if (local_hours >= start_hours && local_hours <= finish_hours) {
 
     Queue.enqueue('scheduled_insight', {
@@ -40,10 +37,17 @@ let perform = async (job, done) => {
 
   } else {
 
-    Queue.enqueue('schedule', {
-      user_id,
-      __delay: start_time.add(24, 'hours').diff(local_time)
-    })
+    if (local_time.isBefore(start_time))
+      Queue.enqueue('schedule', {
+        user_id,
+        __delay: start_time.diff(local_time)
+      })
+
+    if (local_time.isAfter(finish_time))
+      Queue.enqueue('schedule', {
+        user_id,
+        __delay: local_time.diff(start_time.add(1, 'day'))
+      })
 
   }
 
