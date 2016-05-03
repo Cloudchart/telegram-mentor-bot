@@ -2,7 +2,7 @@ import moment from 'moment-timezone'
 import chalk from 'chalk'
 import User from '../../user'
 
-const ScheduleDelay = 15 * 60 * 1000
+const ScheduleDelay = 2 * 60 * 60 * 1000
 
 
 let perform = async (job, done) => {
