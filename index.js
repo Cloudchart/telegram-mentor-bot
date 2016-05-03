@@ -26,7 +26,7 @@ let getUpdates = () => {
       })
       getUpdates()
     })
-    .catch(console.error)
+    .catch((error) => getUpdates())
 }
 
 Queue.start()
