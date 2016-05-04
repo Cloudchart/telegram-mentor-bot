@@ -46,6 +46,7 @@ const TopicsQuery = () => `
           node {
             id
             name
+            description
             isSubscribedByViewer
           }
         }

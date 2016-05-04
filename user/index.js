@@ -194,7 +194,7 @@ class User {
 
   unsubscribe = async (topic) => {
     await this._mentor.unsubscribeFromTopic(topic.id)
-    await this._topics(true)
+    await this.topics(true)
   }
 
   query = (name, variables) => this._mentor.query(name, variables)
