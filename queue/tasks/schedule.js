@@ -40,25 +40,20 @@ let perform = async (job, done) => {
 
         user.setState({ ...user.state, scheduled_at: now.format() })
 
-        Queue.enqueue('schedule', {
-          user_id,
-          __delay: ScheduleDelay
-        })
-
-      } else {
-
-        console.log(
-          chalk.green('Queue::Tasks::Schedule: sending insight for user'),
-          chalk.blue(user.id),
-          chalk.green('in ' + moment.duration(delay).humanize())
-        )
-
-        Queue.enqueue('schedule', {
-          user_id,
-          __delay: delay
-        })
-
+        delay = ScheduleDelay
       }
+
+      console.log(
+        chalk.green('Queue::Tasks::Schedule: sending insight for user'),
+        chalk.blue(user.id),
+        chalk.green('in ' + moment.duration(delay).humanize())
+      )
+
+      Queue.enqueue('schedule', {
+        user_id,
+        __delay: delay
+      })
+
 
     } else {
       if (start.isBefore(now)) start.add(1, 'day')
@@ -81,46 +76,9 @@ let perform = async (job, done) => {
 
   } finally {
 
-    done()
+    return done()
 
   }
-
-
-  // start_time = moment.utc(start_time, 'HH:mm').subtract(utc_offset, 'minutes')
-  // finish_time = moment.utc(finish_time, 'HH:mm').subtract(utc_offset, 'minutes')
-  // let local_time = moment.tz(process.env.TIME_ZONE || 'UTC').utc()
-
-
-  // let start_hours = start_time.hours()
-  // let finish_hours = finish_time.hours()
-  // let local_hours = local_time.hours()
-  //
-  // if (local_hours >= start_hours && local_hours <= finish_hours) {
-  //
-  //   Queue.enqueue('scheduled_insight', {
-  //     user_id
-  //   })
-  //
-  //   Queue.enqueue('schedule', {
-  //     user_id,
-  //     __delay: ScheduleDelay
-  //   })
-  //
-  // } else {
-  //
-  //   if (local_time.isBefore(start_time))
-  //     Queue.enqueue('schedule', {
-  //       user_id,
-  //       __delay: start_time.diff(local_time)
-  //     })
-  //
-  //   if (local_time.isAfter(finish_time))
-  //     Queue.enqueue('schedule', {
-  //       user_id,
-  //       __delay: local_time.diff(start_time.add(1, 'day'))
-  //     })
-  //
-  // }
 
   done()
 }
