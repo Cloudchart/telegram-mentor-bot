@@ -17,7 +17,7 @@ let getIntent = ({ entities }) => {
   intent = KnownIntents[intent[0].value]
   if (!intent) return null
 
-  let param = payload[intent.param][0] && payload[intent.param][0].value
+  let param = payload[intent.param] && payload[intent.param][0] && payload[intent.param][0].value
 
   return { command: intent.command, param }
 }
