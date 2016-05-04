@@ -6,6 +6,16 @@ const KnownIntents = {
   'show advice': {
     param:    'mentor_topics',
     command:  'advice'
+  },
+
+  'subscribe': {
+    param:    'mentor_topics',
+    command:  'subscribe'
+  },
+
+  'unsubscribe': {
+    param:    'mentor_topics',
+    command:  'unsubscribe'
   }
 }
 
