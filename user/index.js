@@ -3,6 +3,7 @@ import bot from '../bot'
 import Mentor from '../mentor'
 import Commands from '../commands'
 import Queries from '../queries'
+import wit from '../wit'
 
 import {
   getMessageCommand
@@ -69,6 +70,9 @@ class User {
         return await this.handleCommand(command, message)
 
       if (await this.handleTopic(message.text.trim().toLowerCase()))
+        return
+
+      if (await wit.perform(this, message.text.trim()))
         return
 
       return await this.sendMessage(message, `Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`)
