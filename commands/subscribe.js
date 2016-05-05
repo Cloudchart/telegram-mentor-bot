@@ -1,6 +1,10 @@
 import chalk from 'chalk'
 import StartTimeCommand from './start_time'
 
+import {
+  humanizeTopics
+} from './utils'
+
 
 const Responses = {
 
@@ -79,15 +83,6 @@ const Responses = {
 
 }
 
-
-let humanizeTopics = (topics) => {
-  let names = topics.map(topic => `*${topic.name}*`)
-  let head = names.slice(0, topics.length - 1).join(', ')
-  let tail = names[names.length - 1]
-  return [head, tail].join(' and ')
-}
-
-
 let topicsKeyboard = (topics) => {
   let availableTopics = topics.availableTopics.map(topic => [topic.name])
   let done = topics.subscribedTopics.length > 0 ? [['Done']] : []
@@ -107,30 +102,26 @@ let enter = async (user, options = {}) => {
 
     let topics = await user.topics()
 
-    if (topics.availableSlotsCount == 0) {
-      await user.reply(await Responses.enter.no_slots(user), {
-        reply_markup: { hide_keyboard: true }
-      })
-      return await leave(user, { silent: true })
+    let reply_markup = {
+      keyboard: topicsKeyboard(topics),
+      one_time_keyboard: true,
+      resize_keyboard: true,
     }
 
-    if (topics.subscribedTopics.length == 0) {
-      return await user.reply(await Responses.enter.no_topics(user), {
-        reply_markup: {
-          keyboard: topicsKeyboard(topics),
-          one_time_keyboard: true,
-          resize_keyboard: true,
-        }
-      })
-    }
+    if (options.response)
+      return await user.reply(options.response, { reply_markup })
 
-    await user.reply(await Responses.enter.normal(user), {
-      reply_markup: {
-        keyboard: topicsKeyboard(topics),
-        one_time_keyboard: true,
-        resize_keyboard: true,
-      }
-    })
+
+    if (topics.availableSlotsCount == 0)
+      return await leave(user, {
+        response: await Responses.enter.no_slots(user)
+      })
+
+
+    if (topics.subscribedTopics.length == 0)
+      return await user.reply(await Responses.enter.no_topics(user), { reply_markup })
+
+    return await user.reply(await Responses.enter.normal(user), { reply_markup })
 
   } catch (error) {
     console.log(chalk.green('Commands::Subscribe::Enter'), chalk.red(error))
@@ -145,7 +136,7 @@ let perform = async (user, value) => {
 
   try {
 
-    if (!user.state.context == 'subscribe' || !value)
+    if (user.state.context !== 'subscribe' && !value)
       return await enter(user)
 
     let query = value.trim().toLowerCase()
@@ -162,28 +153,18 @@ let perform = async (user, value) => {
 
     // No available slots
     //
-    if (topics.availableSlotsCount == 0) {
-      await user.reply(await Responses.perform.no_slots(user, value), {
-        reply_markup: { hide_keyboard: true }
+    if (topics.availableSlotsCount == 0)
+      return await leave(user, {
+        response: await Responses.perform.no_slots(user, value)
       })
-      return await leave(user, { silent: true })
-    }
 
 
     let topic = topics.availableTopics.find(topic => topic.name.toLowerCase() == query)
 
-    // Topic not found
-    //
-    if (!topic) {
-      await user.reply(await Responses.perform.not_found(user, value), {
-        reply_markup: {
-          keyboard: topicsKeyboard(topics),
-          one_time_keyboard: true,
-          resize_keyboard: true,
-        }
+    if (!topic)
+      return await enter(user, {
+        response: await Responses.perform.not_found(user, value)
       })
-      return await enter(user, { silent: true })
-    }
 
 
     // Subscribe
@@ -198,15 +179,11 @@ let perform = async (user, value) => {
       return await leave(user)
 
 
-    await user.reply(await Responses.perform.normal(user, topic), {
-      reply_markup: {
-        keyboard: topicsKeyboard(topics),
-        one_time_keyboard: true,
-        resize_keyboard: true,
-      }
+    // Ask for another one
+    //
+    return await enter(user, {
+      reponse: await Responses.perform.normal(user, topic)
     })
-
-    return await enter(user, { silent: true })
 
 
   } catch (error) {
@@ -225,6 +202,11 @@ let leave = async (user, options = {}) => {
   try {
 
     if (options.silent) return
+
+    if (options.response)
+      return await user.reply(options.response, {
+        reply_markup: { hide_keyboard: true }
+      })
 
     let topics = await user.topics()
 

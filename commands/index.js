@@ -5,6 +5,8 @@ import unsubscribe from './unsubscribe'
 import start_time from './start_time'
 import finish_time from './finish_time'
 import local_time from './local_time'
+import hello from './hello'
+import bullshit from './bullshit'
 
 export default {
   '/start': start,
@@ -24,4 +26,8 @@ export default {
 
   'local_time': local_time,
   '/local_time': local_time,
+
+  'hello': hello,
+
+  'bullshit': bullshit
 }

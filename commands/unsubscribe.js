@@ -116,7 +116,7 @@ let perform = async (user, value) => {
 
   try {
 
-    if (user.state.context != Context || !value)
+    if (user.state.context != Context && !value)
       return await enter(user)
 
     let query = value.toLowerCase()

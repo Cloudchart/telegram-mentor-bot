@@ -75,7 +75,8 @@ class User {
       if (await wit.perform(this, message.text.trim()))
         return
 
-      return await this.sendMessage(message, `Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`)
+      return await Commands['bullshit'].perform(this)
+      // return await this.sendMessage(message, `Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`)
     } catch (error) {
       console.log(error)
     }

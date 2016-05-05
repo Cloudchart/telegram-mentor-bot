@@ -16,6 +16,10 @@ const KnownIntents = {
   'unsubscribe': {
     param:    'mentor_topics',
     command:  'unsubscribe'
+  },
+
+  'hello': {
+    command:  'hello'
   }
 }
 
