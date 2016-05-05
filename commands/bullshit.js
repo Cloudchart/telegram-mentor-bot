@@ -1,5 +1,10 @@
 import chalk from 'chalk'
 
+import {
+  sample
+} from './utils'
+
+
 const Responses = [
   `I don’t understand your barbarian language. But I still see potential in you.`,
   `This too shall pass.`,
@@ -29,15 +34,11 @@ const Responses = [
 ]
 
 
-let response = () =>
-  Responses[Math.round(Math.random() * (Responses.length - 1))]
-
-
 let perform = async (user, value) => {
   console.log(chalk.green('Commands::Bullshit::Perform'), chalk.blue(user.id))
 
   try {
-    await user.reply(response())
+    await user.reply(sample(Responses))
   } catch(error) {
     console.log(chalk.green('Commands::Bullshit::Perform'), chalk.red(error))
   }

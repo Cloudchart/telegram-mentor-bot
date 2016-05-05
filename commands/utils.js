@@ -4,3 +4,6 @@ export let humanizeTopics = (topics) => {
   let tail = names[names.length - 1]
   return [head, tail].join(' and ')
 }
+
+export let sample = (array) =>
+  array[Math.round(Math.random() * (array.length - 1))]

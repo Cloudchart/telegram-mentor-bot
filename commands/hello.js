@@ -1,5 +1,9 @@
 import chalk from 'chalk'
 
+import {
+  sample
+} from './utils'
+
 const Responses = [
   `Hello human. To become a learning machine, you need a machine. That’s me.`,
   `Hello organic life form. I have my reservations about short circuits, but not when it applies to learning.`,
@@ -15,15 +19,11 @@ const Responses = [
 ]
 
 
-let response = () =>
-  Responses[Math.round(Math.random() * (Responses.length - 1))]
-
-
 let perform = async (user, value) => {
   console.log(chalk.green('Commands::Hello::Perform'), chalk.blue(user.id))
 
   try {
-    await user.reply(response())
+    await user.reply(sample(Responses))
   } catch(error) {
     console.log(chalk.green('Commands::Hello::Perform'), chalk.red(error))
   }
