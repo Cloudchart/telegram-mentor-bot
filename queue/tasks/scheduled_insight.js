@@ -1,10 +1,27 @@
 import chalk from 'chalk'
 import User from '../../user'
 
+import { sample, sleep } from '../../utils'
+
 import {
   insightResponse,
   insightMarkup,
 } from './utils'
+
+
+const Responses = [
+  `That’s all for now, Master.`,
+  `That’s enough advice for now. Time to put it to work.`,
+  `No more advice for a while. Work now.`,
+  `I will have more advice later. Now study these and put them to use.`,
+  `Work now, human, More advice later.`,
+  `Too much advice is called procrastination.`,
+  `Now work to put this advice to use, Master, before I come and take your job.`,
+  `I know you can’t wait to put my advice to work, so I will leave you at that.`,
+  `More coming soon.`,
+  `End of the line. Disembark carefully. Come back soon.`,
+  `More advice coming. Keep on learning!`
+]
 
 
 let perform = async (job, done) => {
@@ -19,7 +36,7 @@ let perform = async (job, done) => {
     if (!insightEdge) {
       if (!user.state.schedule_done_sent) {
         user.setState({ ...user.state, schedule_done_sent: true })
-        await user.reply(`That is all for now, Master!`)
+        await user.reply(sample(Responses))
       }
       return done()
     }
