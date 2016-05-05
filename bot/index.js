@@ -138,6 +138,16 @@ class Bot {
       disable_web_page_preview: true,
     })
 
+  editMessageText = (chat_id, message_id, text, reply_markup) =>
+    this._request('editMessageText', {
+      parse_mode: 'Markdown',
+      disable_web_page_preview: true,
+      chat_id,
+      message_id,
+      text,
+      reply_markup,
+    })
+
   _request = (method, payload) =>
     fetch(`${this._api_url}/bot${this._token}/${method}`, {
       method: 'post',

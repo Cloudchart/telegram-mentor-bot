@@ -1,6 +1,12 @@
 import chalk from 'chalk'
 import User from '../../user'
 
+import { sleep } from '../../utils'
+
+import {
+  insightResponse
+} from './utils'
+
 
 let forceReplyMarkup = (rate) => ({
   inline_keyboard: [[
@@ -17,11 +23,14 @@ let scheduleReplyMarkup = (rate) => ({
 })
 
 
+
 let perform = async (job, done) => {
 
   let {
     user_id,
     message_id,
+    message_text,
+    message_entities,
     callback_query_id,
     rate,
   } = job.data
@@ -55,18 +64,35 @@ let perform = async (job, done) => {
 
     user.setState({ insights })
 
-    let replyMarkup = type === 'schedule'
-      ? scheduleReplyMarkup(rate)
-      : forceReplyMarkup(rate)
+    let replyMarkup = { inline_keyboard: [] }
 
-    await user.updateMessageReplyMarkup(message_id, replyMarkup)
+    let insight = await user.query('Insight', { id: insight_id }).then(({ node }) => node)
 
-    if (type === 'schedule')
-      await Queue.enqueue('scheduled_insight', {
-        user_id
-      })
+    let text = `${ insightResponse(insight) }${ rate == 1 ? '👍' : '👎' }`
+
+    await user.editMessageText(message_id, text, replyMarkup)
+
+    switch (type) {
+      case 'schedule':
+        await sleep(1000)
+        await Queue.enqueue('scheduled_insight', { user_id })
+        break
+      case 'force':
+        let limit = user.state.forced_insight || {}
+
+        if (limit.count == 0 && limit.response) {
+          await sleep(1000)
+          await user.reply(limit.response, { reply_markup: { hide_keyboard: true } })
+        }
+
+        await sleep(1000)
+
+        await Queue.enqueue('insight', { user_id, topic_id, type })
+        break
+    }
 
   } catch (error) {
+    console.log(JSON.stringify(error))
     console.error(chalk.green('Queue::InsightReaction'), chalk.red(error))
   }
 

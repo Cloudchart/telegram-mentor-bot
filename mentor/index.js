@@ -55,7 +55,7 @@ const TopicsQuery = () => `
   }
 `
 
-const InsightQuery = (topic_id) => `
+const NewInsightQuery = (topic_id) => `
   query q {
     node(id: "${topic_id}") {
       ... on Topic {
@@ -102,7 +102,7 @@ class Mentor {
   subscribeOnTopic = async (topic_id) =>
     await this._request(SubscribeOnTopicMutation(topic_id))
 
-  adviceForTopic = (topic_id) => this._request(InsightQuery(topic_id)).then(data => data.node)
+  adviceForTopic = (topic_id) => this._request(NewInsightQuery(topic_id)).then(data => data.node)
 
   likeInsightInTopic = (topic_id, insight_id) =>
     this._request(likeInsightInTopic({ insight_id, topic_id }))

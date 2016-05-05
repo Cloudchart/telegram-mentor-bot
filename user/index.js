@@ -144,6 +144,9 @@ class User {
     })
 
 
+  editMessageText = (message_id, text, reply_markup) =>
+    bot.editMessageText(this.state.chat_id, message_id, text.trim().replace(/\n[ \t]+/g, '\n'), reply_markup)
+
   updateMessageReplyMarkup = (message_id, reply_markup) =>
     bot.updateMessageReplyMarkup(this.state.chat_id, message_id, reply_markup)
 
