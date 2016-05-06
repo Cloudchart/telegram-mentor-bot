@@ -1,9 +1,7 @@
-import chalk from 'chalk'
+import Command from './command'
+import HelpCommand from './help'
 
-import {
-  sample
-} from './utils'
-
+import { sample } from '../utils'
 
 const Responses = [
   `I don’t understand your barbarian language. But I still see potential in you.`,
@@ -34,17 +32,30 @@ const Responses = [
 ]
 
 
-let perform = async (user, value) => {
-  console.log(chalk.green('Commands::Bullshit::Perform'), chalk.blue(user.id))
+class BullshitCommand extends Command {
 
-  try {
-    await user.reply('[[WRONG COMMAND]] ' + sample(Responses))
-  } catch(error) {
-    console.log(chalk.green('Commands::Bullshit::Perform'), chalk.red(error))
+  static displayName = 'Bullshit'
+
+  static contextName = 'bullshit'
+
+  shouldLeaveFromPerform = () => true
+
+  responseForLeave = (user, value, options = {}) => {
+    return {
+      response: '[[WRONG COMMAND]] ' + sample(Responses),
+      reply_markup: { hide_keyboard: true },
+    }
+  }
+
+  sideEffectsInLeave = async (user) => {
+    if (user.state.bullshit < 2) return
+    await user.setState({ bullshit: 0 })
+    await HelpCommand.perform(user)
   }
 
 }
 
-export default {
-  perform
-}
+
+let instance = new BullshitCommand
+
+export default instance

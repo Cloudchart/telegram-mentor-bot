@@ -19,6 +19,7 @@ const Unknown = Symbol('Unknown')
 
 class Command {
 
+
   constructor() {
     if (this.displayName() === Unknown)
       throw new Error(`${this.displayName()} should have static field 'displayName'.`)
@@ -36,7 +37,16 @@ class Command {
   // Enter
   //
   enter = async (user, options = {}) => {
-    protect(this.displayName() + '::Enter', async () => {
+    console.log(chalk.green(this.displayName() + '::Enter'), chalk.blue(user.id))
+
+    return protect(this.displayName() + '::Enter', async () => {
+
+      await user.setState({ context: this.contextName() })
+
+      await this.sideEffectsInEnter(user, options)
+
+      let { response, reply_markup } = await this.responseForEnter(user, options) || {}
+      if (response) await user.reply(response, { reply_markup })
 
     })
   }
@@ -44,10 +54,16 @@ class Command {
   responseForEnter = () =>
     undefinedMethodError(this.displayName(), 'responseForEnter')
 
+  sideEffectsInEnter = () => null
+
   // Perform
   //
   perform = async (user, value, options = {}) => {
-    protect(this.displayName() + '::Perform', async () => {
+    console.log(chalk.green(this.displayName() + '::Perform'), chalk.blue(user.id), chalk.yellow(value || ''))
+
+    return protect(this.displayName() + '::Perform', async () => {
+      await this.sideEffectsInPerform(user, value, options)
+
       if (this.shouldEnterFromPerform(user, value, options))
         return await this.enter(user, options)
 
@@ -65,18 +81,33 @@ class Command {
   responseForPerform = () =>
     undefinedMethodError(this.displayName(), 'responseForPerform')
 
+  sideEffectsInPerform = () => null
+
   // Leave
   //
   leave = async (user, options = {}) => {
+    console.log(chalk.green(this.displayName() + '::Leave'), chalk.blue(user.id))
+
     return protect(this.displayName() + '::Leave', async () => {
+
+      await user.setState({ context: null })
+
+      let { response, reply_markup } = await this.responseForLeave(user, options) || {}
+      if (response) await user.reply(response, { reply_markup })
+
+      await this.sideEffectsInLeave(user, options)
+
       return await this.resultFromLeave(user)
+
     })
   }
 
-  resultFromLeave = () => null
-
   responseForLeave = () =>
     undefinedMethodError(this.displayName(), 'responseForLeave')
+
+  sideEffectsInLeave = () => null
+
+  resultFromLeave = () => null
 
 }
 

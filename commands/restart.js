@@ -1,10 +1,25 @@
-import chalk from 'chalk'
-
+import Command from './command'
 import Queue from '../queue'
-import StartCommand from './start'
-import { protect } from './utils'
 
-let Command = (name) => chalk.green(`Command::Restart::${name}`)
+
+const ConfirmationMessage = 'YES'
+
+const Responses = {
+
+  enter: `
+    Please type *${ConfirmationMessage}* if you want to reset me.
+  `
+  ,
+
+  leave_success: `
+    Reset sequence commencing...
+  `,
+
+  leave_failure: `
+    Okay, business as usual.
+  `
+
+}
 
 
 let resetUser = async (user) => {
@@ -16,79 +31,50 @@ let resetUser = async (user) => {
 }
 
 
-const ConfirmationMessage = `YES`
+class RestartCommand extends Command {
+
+  static displayName = 'Restart'
+
+  static contextName = 'restart'
+
+  static perform = (...args) => {
+    return new RestartCommand().perform(...args)
+  }
 
 
-const Responses = {
-  enter: `
-    Would you like to reset my machinery to choose different topics and schedule?
-    Type *${ConfirmationMessage}* to reset.
-  `,
-
-  leave_success: `
-    As you wish, Master. Resetting now.
-  `,
-
-  leave_failure: `
-    Okay, business as usual.
-  `,
-}
+  shouldEnterFromPerform = (user, value) =>
+    user.state.context !== 'restart' && !value
 
 
-let enter = async (user, options = {}) => {
-  await protect(Command('Enter'), async () => {
+  sideEffectsInPerform = (user, value) =>
+    this.answer = value === ConfirmationMessage
 
-    await user.setState({ context: 'restart' })
 
-    if (options.response)
-      return await user.reply(options.response)
+  shouldLeaveFromPerform = () =>
+    this.answer !== undefined
 
-    return await user.reply(Responses.enter)
 
+  responseForEnter = (user, options) => ({
+    response: options.response || Responses.enter
   })
-}
 
-let perform = async (user, value) => {
-  await protect(Command('Perform'), async () => {
 
-    if (user.state.context != 'restart')
-      return await enter(user)
-
-    value = value.trim()
-
-    if (value != ConfirmationMessage)
-      return await leave(user, { status: 'failure' })
-
-    return await leave(user, { status: 'success' })
-
+  responseForLeave = () => ({
+    response: this.answer ? Responses.leave_success : Responses.leave_failure
   })
+
+
+  sideEffectsInLeave = async (user) => {
+    if (!this.answer) return
+    await resetUser(user)
+    await Queue.refresh(user)
+  }
+
+
+  resultFromLeave = () =>
+    this.answer
+
 }
 
 
-let leave = async (user, options = {}) => {
-  await protect(Command('Leave'), async () => {
-
-    await user.setState({ context: null })
-
-    if (options.response)
-      return await user.reply(options.response)
-
-    if (options.status == 'failure')
-      return await user.reply(Responses.leave_failure)
-
-    if (options.status == 'success') {
-      await user.reply(Responses.leave_success)
-
-      await resetUser(user)
-      await Queue.refresh(user)
-
-      await StartCommand.perform(user)
-    }
-
-  })
-}
-
-
-export default {
-  perform
-}
+export default RestartCommand

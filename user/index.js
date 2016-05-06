@@ -74,6 +74,9 @@ class User {
     return await this.ensureState()
   }
 
+  clearBullshit = async () =>
+    await this.setState({ bullshit: 0 })
+
 
   // Handle message
   //
@@ -87,20 +90,30 @@ class User {
 
       let command = getMessageCommand(message)
 
-      if (this.state.context)
-        return await this.handleContext(message)
+      if (this.state.context) {
+        await this.handleContext(message)
+        return await clearBullshit()
+      }
 
-      if (command)
-        return await this.handleCommand(command, message)
+      if (command) {
+        await this.handleCommand(command, message)
+        return await clearBullshit()
+      }
 
-      if (await this.handleTopic(message.text.trim().toLowerCase()))
-        return
+      if (await this.handleTopic(message.text.trim().toLowerCase())) {
+        return await clearBullshit()
+      }
 
-      if (await wit.perform(this, message.text.trim()))
-        return
+      if (await wit.perform(this, message.text.trim())) {
+        return await clearBullshit()
+      }
+
+      await this.setState({
+        bullshit: (this.state.bullshit || 0) + 1
+      })
 
       return await Commands['bullshit'].perform(this)
-      // return await this.sendMessage(message, `Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`)
+
     } catch (error) {
       console.log(error)
     }

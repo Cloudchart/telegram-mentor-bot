@@ -1,4 +1,5 @@
 import ChainBuilder from './chain_builder'
+import Queue from '../queue'
 
 import {
   timeZoneFromUTC
@@ -26,6 +27,11 @@ export default ChainBuilder.create({
       from_time_zone: (user) =>`
         I will be giving you advice from *${ user.state.start_time }* to *${ user.state.finish_time }*, and your time zone is *${ timeZoneFromUTC(user.state.utc_offset) }*.
       `
+  },
+
+  leave: async (user) => {
+    console.log('refreshing user')
+    await Queue.refresh(user)
   }
 
 })

@@ -2,7 +2,7 @@ import Commands from '../commands'
 
 let knownNames = []
 
-let create = ({ name, commands, responses }) => {
+let create = ({ name, commands, responses, leave }) => {
 
   if (knownNames.indexOf(name) !== -1)
     throw new Error(`Execution Chain ${name} already exists.`)
@@ -31,6 +31,9 @@ let create = ({ name, commands, responses }) => {
       let response = responses[`from_${commands[commandIndex]}`]
       if (response)
         await user.reply(response(user), { reply_markup: { hide_keyboard: true } })
+
+      if (typeof leave === 'function')
+        await leave(user)
 
       return
     }

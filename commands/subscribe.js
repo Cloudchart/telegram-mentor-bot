@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import StartTimeCommand from './start_time'
+import ExecutionChains from '../execution_chains'
 
 import {
   humanizeTopics
@@ -225,7 +225,8 @@ let leave = async (user, options = {}) => {
     }
 
     if (!user.state.initialized)
-      return await StartTimeCommand.enter(user)
+      //return await StartTimeCommand.perform(user)
+      return await ExecutionChains.time.next(user)
 
   } catch (error) {
     console.log(chalk.green('Commands::Subscribe::Leave'), chalk.red(error))

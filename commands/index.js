@@ -45,13 +45,22 @@ let commands = {
 
   'bullshit': bullshit,
 
-  '/restart': restart,
-  'restart': restart,
+  // '/restart': restart,
+  // 'restart': restart,
 
   '/help': help,
   'help': help
 }
 
+// Restart
+//
+commands[restart.contextName] = restart
+commands['/' + restart.contextName] = restart
+
+// Mentor
+//
 commands[mentor.contextName()] = mentor
 
+// Exports
+//
 export default commands
