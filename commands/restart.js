@@ -11,8 +11,12 @@ const Responses = {
   `
   ,
 
+  // leave_success: `
+  //   Reset sequence commencing...
+  // `,
+
   leave_success: `
-    Reset sequence commencing...
+    It's broken at the moment. Will be fixed soon.
   `,
 
   leave_failure: `
@@ -65,9 +69,9 @@ class RestartCommand extends Command {
 
 
   sideEffectsInLeave = async (user) => {
-    if (!this.answer) return
-    await resetUser(user)
-    await Queue.refresh(user)
+    // if (!this.answer) return
+    // await resetUser(user)
+    // await Queue.refresh(user)
   }
 
 

@@ -92,20 +92,20 @@ class User {
 
       if (this.state.context) {
         await this.handleContext(message)
-        return await clearBullshit()
+        return await this.clearBullshit()
       }
 
       if (command) {
         await this.handleCommand(command, message)
-        return await clearBullshit()
+        return await this.clearBullshit()
       }
 
       if (await this.handleTopic(message.text.trim().toLowerCase())) {
-        return await clearBullshit()
+        return await this.clearBullshit()
       }
 
       if (await wit.perform(this, message.text.trim())) {
-        return await clearBullshit()
+        return await this.clearBullshit()
       }
 
       await this.setState({
