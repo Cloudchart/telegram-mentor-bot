@@ -1,85 +1,114 @@
-import LocalTimeCommand from './local_time'
+import chalk from 'chalk'
 
+import ExecutionChains from '../execution_chains'
+import { protect } from './utils'
 import {
   timeKeyboard,
   parseTime,
 } from '../utils'
 
 
+let Command = (name, ...rest) => chalk.green(`Command::FinishTime::${name}`, ...rest)
+
+
+let ReplyMarkup = {
+  reply_markup: {
+    keyboard: timeKeyboard(),
+    one_time_keyboard: true,
+  }
+}
+
+let HideReplyMarkup = {
+  reply_markup: {
+    hide_keyboard: true
+  }
+}
+
+
 const Responses = {
 
-  enter: `
-    And when do you want me to stop?
+  enter: () => `
+    When should I finish giving advice?
   `,
 
-  perform: `
+  enter_has_time: (value) => `
+    Your current finish time is *${value}*.
+    When should I finish giving advice?
+
+    Or you can /cancel.
   `,
 
   perform_error: (value) => `
     *${value}* doesn't look like a time to me. Try again, Master.
   `,
 
-  leave: (time) => `
-    At *${time}*, then. Will do, Master.
+  leave: (value) => `
+    I will be giving you advice till *${value}*
+  `,
+
+  leave_cancel: (value) =>  `
+    Ok, then.
+    I will continue giving you advice till *${value}*
   `
 
 }
 
-// Enter
-//
-let enter = async (user) => {
-  await user.setState({ context: 'finish_time' })
 
-  if (user.state.finish_time)
-    return await leave(user)
+let enter = async (user, options = {}) => {
+  await protect(Command('Enter', user.id), async () => {
 
-  await user.reply(Responses.enter, {
-    reply_markup: {
-      keyboard: timeKeyboard(),
-      one_time_keyboard: true,
-    }
+    await user.setState({ context: 'finish_time' })
+
+    let response = options.response
+      ? options.response
+      : user.state.finish_time
+        ? Responses.enter_has_time(user.state.finish_time)
+        : Responses.enter()
+
+    await user.reply(response, ReplyMarkup)
+
   })
 }
 
-// Perform
-//
-let perform = async (user, value) => {
-  try {
-    value = value.trim().replace(/\s+/g, ' ')
-    let time = parseTime(value)
 
-    if (!time)
-      return await user.reply(Responses.perform_error(value), {
-        reply_markup: {
-          keyboard: timeKeyboard(),
-          one_time_keyboard: true,
-        }
-      })
+let perform = async (user, value, options = {}) => {
+  await protect(Command('Perform', user.id, value), async () => {
 
-    await user.setState({ finish_time: time })
+    if (user.state.context != 'finish_time' && !value)
+      return await enter(user, options)
+
+    value = value.trim()
+
+    if (value === '/cancel' && user.state.finish_time)
+      return await leave(user, { response: Responses.leave_cancel(user.state.finish_time) })
+
+    let finish_time = parseTime(value)
+
+    if (!finish_time)
+      return await enter(user, { response: Responses.perform_error(value) })
+
+    await user.setState({ finish_time })
 
     await leave(user)
-  } catch (error) {
-    console.log(error)
-  }
-}
 
-// Leave
-//
-let leave = async (user) => {
-  await user.setState({ context: null })
-
-  await user.reply(Responses.leave(user.state.finish_time), {
-    reply_markup: { hide_keyboard: true }
   })
-
-  await LocalTimeCommand.enter(user)
 }
 
-// Exports
-//
+
+let leave = async (user, options = {}) => {
+  await protect(Command('Leave', user.id), async () => {
+
+    if (user.state.execution_chain)
+      return await ExecutionChains[user.state.execution_chain].next(user)
+
+    await user.setState({ context: null })
+
+    await user.reply(options.response || Responses.leave(user.state.finish_time), HideReplyMarkup)
+
+  })
+}
+
+
 export default {
-  enter,
-  perform,
-  leave,
+  perform
 }

@@ -20,6 +20,10 @@ const KnownIntents = {
 
   'hello': {
     command:  'hello'
+  },
+
+  'help': {
+    command: 'help'
   }
 }
 

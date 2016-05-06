@@ -131,7 +131,7 @@ let enter = async (user, options = {}) => {
 
 // Perform
 //
-let perform = async (user, value) => {
+let perform = async (user, value, options = {}) => {
   console.log(chalk.green('Commands::Subscribe::Perform'), chalk.blue(user.id))
 
   try {

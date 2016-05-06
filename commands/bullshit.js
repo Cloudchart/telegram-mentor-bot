@@ -38,7 +38,7 @@ let perform = async (user, value) => {
   console.log(chalk.green('Commands::Bullshit::Perform'), chalk.blue(user.id))
 
   try {
-    await user.reply(sample(Responses))
+    await user.reply('[WRONG COMMAND] ' + sample(Responses))
   } catch(error) {
     console.log(chalk.green('Commands::Bullshit::Perform'), chalk.red(error))
   }

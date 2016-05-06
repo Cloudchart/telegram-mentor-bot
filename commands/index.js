@@ -2,11 +2,15 @@ import start from './start'
 import advice from './advice'
 import subscribe from './subscribe'
 import unsubscribe from './unsubscribe'
+import time from './time'
 import start_time from './start_time'
 import finish_time from './finish_time'
+import time_zone from './time_zone'
 import local_time from './local_time'
 import hello from './hello'
 import bullshit from './bullshit'
+
+import help from './help'
 
 import restart from './restart'
 
@@ -22,9 +26,16 @@ export default {
   'unsubscribe': unsubscribe,
   '/unsubscribe': unsubscribe,
 
+  '/time': time,
+
   'start_time': start_time,
+  '/start_time': start_time,
 
   'finish_time': finish_time,
+  '/finish_time': finish_time,
+
+  'time_zone': time_zone,
+  '/time_zone': time_zone,
 
   'local_time': local_time,
   '/local_time': local_time,
@@ -34,5 +45,8 @@ export default {
   'bullshit': bullshit,
 
   '/restart': restart,
-  'restart': restart
+  'restart': restart,
+
+  '/help': help,
+  'help': help
 }
