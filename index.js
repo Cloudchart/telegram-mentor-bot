@@ -5,11 +5,11 @@ import Mentor from './mentor'
 import User from './user'
 import Queue from './queue'
 import { dispatch } from './dispatcher'
+import { sleep } from './utils'
 
 import './telegram-bot'
 
 let lastUpdateId  = 0
-
 
 let getUpdates = () => {
   console.log('fetching updates...')
@@ -37,6 +37,7 @@ let getUpdates = () => {
     } )
 }
 
-Queue.start()
-
-getUpdates()
+(async function() {
+  await Queue.start()
+  getUpdates()
+})()

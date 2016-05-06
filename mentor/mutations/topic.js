@@ -13,16 +13,16 @@ let getMutationName = (name) => {
 }
 
 
-const StatusMutation = ({ topic_id, name }) => `
-  mutation m {
+const StatusMutation = (name) => `
+  mutation m($topic_id: ID!) {
     ${getMutationName(name)}(input: {
       clientMutationId: "${ nextMutationId() }"
-      topicID: "${topic_id}"
+      topicID: $topic_id
     }) {
       clientMutationId
     }
   }
 `
 
-export let subscribeOnTopic = (payload) => StatusMutation({ ...payload, name: 'subscribe' })
-export let unsubscribeFromTopic = (payload) => StatusMutation({ ...payload, name: 'unsubscribe' })
+export let subscribeOnTopic = StatusMutation('subscribe')
+export let unsubscribeFromTopic = StatusMutation('unsubscribe')

@@ -94,7 +94,7 @@ let topicsKeyboard = (topics) => {
 //
 let enter = async (user, options = {}) => {
   console.log(chalk.green('Commands::Subscribe::Enter'), chalk.blue(user.id))
-  user.setState({ context: 'subscribe' })
+  await user.setState({ context: 'subscribe' })
 
   try {
 
@@ -197,7 +197,7 @@ let perform = async (user, value) => {
 //
 let leave = async (user, options = {}) => {
   console.log(chalk.green('Commands::Subscribe::Leave'), chalk.blue(user.id))
-  user.setState({ context: null })
+  await user.setState({ context: null })
 
   try {
 

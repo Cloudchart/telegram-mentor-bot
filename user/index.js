@@ -1,3 +1,4 @@
+import moment from 'moment'
 import Redis from 'ioredis'
 import bot from '../bot'
 import Mentor from '../mentor'
@@ -6,7 +7,8 @@ import Queries from '../queries'
 import wit from '../wit'
 
 import {
-  getMessageCommand
+  getMessageCommand,
+  sleepForUser
 } from '../utils'
 
 
@@ -27,27 +29,48 @@ class User {
     this._user = user
     this._mentor = Mentor(user.id)
 
+    this._stateKey = `:user:${this.id}`
     this.state = null
   }
+
+  isInitialized = () =>
+    this.state.initialized === true
 
   // State handling
   //
   ensureUser = async () => {
-    let users = JSON.parse(await redis.get('users')) || []
-    if (users.indexOf(this._user.id) > -1)
-      return
-    users.push(this._user.id)
-    await redis.set('users', JSON.stringify(users))
+    await redis.sadd(':users', this.id)
   }
 
   ensureState = async () => {
-    this.state = await JSON.parse(await redis.get(this._user.id)) || {}
+    this.state = {}
+
+    let state = await redis.hgetall(this._stateKey)
+
+    for (let key in state) {
+      let value = state[key]
+      try { value = JSON.parse(value) } catch(error) {}
+      this.state[key] = value
+    }
+
+    return this.state
   }
 
-  setState = (nextState) => {
-    this.state = { ...this.state, ...nextState }
-    redis.set(this._user.id, JSON.stringify(this.state))
-    return this.state
+  setState = async (nextState = {}) => {
+    let state = {}
+
+    for (let key in nextState)
+      state[key] = JSON.stringify(nextState[key])
+
+    await redis.hmset(this._stateKey, state)
+
+    return await this.ensureState()
+  }
+
+  resetState = async () => {
+    let nextState = { chat_id: this.state.chat_id }
+    this.setState(nextState)
+    return this.ensureState()
   }
 
 
@@ -59,7 +82,7 @@ class User {
       await this.ensureUser()
       await this.ensureState()
       if (!this.state.chat_id)
-        this.setState({ chat_id: message.chat.id })
+        await this.setState({ chat_id: message.chat.id })
 
       let command = getMessageCommand(message)
 
@@ -89,7 +112,7 @@ class User {
     await this.ensureUser()
     await this.ensureState()
     if (!this.state.chat_id)
-      this.setState({ chat_id: callbackQuery.message.chat.id })
+      await this.setState({ chat_id: callbackQuery.message.chat.id })
 
     let query = callbackQuery.data
 
@@ -137,11 +160,15 @@ class User {
     })
 
 
-  reply = (text, options) =>
-    bot.sendMessage(this.state.chat_id, text.trim().replace(/\n[ \t]+/g, '\n'), {
+  reply = async (text, options) => {
+    await sleepForUser(this.state.last_message_sent_at)
+    let response = await bot.sendMessage(this.state.chat_id, text.trim().replace(/\n[ \t]+/g, '\n'), {
       parse_mode: 'Markdown',
       ...options
     })
+    await this.setState({ last_message_sent_at: + moment.utc() })
+    return response
+  }
 
 
   editMessageText = (message_id, text, reply_markup) =>
@@ -183,8 +210,8 @@ class User {
       this._topics = await this._mentor.topics().then(({ availableSlotsCount, edges }) => {
         let data = {}
         data.availableSlotsCount = availableSlotsCount
-        data.subscribedTopics = edges.filter(edge => edge.node.isSubscribedByViewer).map(edge => edge.node)
-        data.availableTopics = edges.filter(edge => !edge.node.isSubscribedByViewer).map(edge => edge.node)
+        data.subscribedTopics = edges.filter(edge => edge.node.isSubscribedByViewer === true).map(edge => edge.node)
+        data.availableTopics = edges.filter(edge => edge.node.isSubscribedByViewer === false).map(edge => edge.node)
         data.defaultTopics = edges.map(edge => edge.node)
         return data
       })
@@ -200,9 +227,10 @@ class User {
     await this.topics(true)
   }
 
-  unsubscribe = async (topic) => {
+  unsubscribe = async (topic, options = {}) => {
     await this._mentor.unsubscribeFromTopic(topic.id)
-    await this.topics(true)
+    if (options.lazy != false)
+      await this.topics(true)
   }
 
   query = (name, variables) => this._mentor.query(name, variables)

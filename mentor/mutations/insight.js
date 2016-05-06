@@ -15,13 +15,13 @@ let getMutationName = (rate) => {
 }
 
 
-const RateMutation = ({ insight_id, topic_id, rate}) => `
+const RateMutation = (rate) => `
 
-  mutation m {
+  mutation m($insight_id: ID!, $topic_id: ID!) {
     ${ getMutationName(rate) }(input: {
       clientMutationId: "${ nextMutationId() }"
-      topicID: "${topic_id}"
-      insightID: "${insight_id}"
+      topicID: $topic_id
+      insightID: $insight_id
     }) {
       insight {
         likeReaction {
@@ -37,6 +37,6 @@ const RateMutation = ({ insight_id, topic_id, rate}) => `
 `
 
 
-export let likeInsightInTopic     = (payload) => RateMutation({ ...payload, rate: 1 })
-export let postponeInsightInTopic = (payload) => RateMutation({ ...payload, rate: 0 })
-export let dislikeInsightInTopic  = (payload) => RateMutation({ ...payload, rate: -1 })
+export let likeInsightInTopic     = RateMutation(1)
+export let postponeInsightInTopic = RateMutation(0)
+export let dislikeInsightInTopic  = RateMutation(-1)

@@ -27,7 +27,7 @@ const Responses = {
 // Enter
 //
 let enter = async (user) => {
-  user.setState({ context: 'start_time' })
+  await user.setState({ context: 'start_time' })
 
   if (user.state.start_time)
     return await leave(user)
@@ -54,7 +54,7 @@ let perform = async (user, value) => {
       }
     })
 
-  user.setState({ start_time: time })
+  await user.setState({ start_time: time })
 
   await leave(user)
 }
@@ -62,7 +62,7 @@ let perform = async (user, value) => {
 // Leave
 //
 let leave = async (user) => {
-  user.setState({ context: null })
+  await user.setState({ context: null })
 
   await user.reply(Responses.leave(user.state.start_time), {
     reply_markup: { hide_keyboard: true }

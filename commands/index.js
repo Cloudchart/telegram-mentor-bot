@@ -8,6 +8,8 @@ import local_time from './local_time'
 import hello from './hello'
 import bullshit from './bullshit'
 
+import restart from './restart'
+
 export default {
   '/start': start,
 
@@ -29,5 +31,8 @@ export default {
 
   'hello': hello,
 
-  'bullshit': bullshit
+  'bullshit': bullshit,
+
+  '/restart': restart,
+  'restart': restart
 }

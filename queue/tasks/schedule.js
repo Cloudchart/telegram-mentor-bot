@@ -38,7 +38,7 @@ let perform = async (job, done) => {
           user_id,
         })
 
-        user.setState({ ...user.state, scheduled_at: now.format() })
+        await user.setState({ ...user.state, scheduled_at: now.format() })
 
         delay = ScheduleDelay
       }

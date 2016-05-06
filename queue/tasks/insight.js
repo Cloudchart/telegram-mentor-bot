@@ -19,7 +19,7 @@ let perform = async (job, done) => {
     if (limit.topic_id != topic_id || limit.count <= 0)
       return done()
 
-    user.setState({
+    await user.setState({
       forced_insight: {
         topic_id: limit.topic_id,
         count: limit.count - 1,
@@ -39,7 +39,7 @@ let perform = async (job, done) => {
       topic_id,
       type
     }
-    user.setState({ insights })
+    await user.setState({ insights })
 
     await user.mutate('postponeInsightInTopic', {
       insight_id: insight.id,

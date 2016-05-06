@@ -20,7 +20,7 @@ const Responses = [
 // Enter
 //
 let enter = async (user, options = {}) => {
-  user.setState({ context: 'advice' })
+  await user.setState({ context: 'advice' })
 
   await user.reply(options.response || 'What is the topic of your interest, Master?', {
     reply_markup: await topicsKeyboard(user)
@@ -50,7 +50,7 @@ let perform = async (user, value) => {
 
     let [enterResponse, leaveResponse] = sample(Responses)
 
-    user.setState({
+    await user.setState({
       forced_insight: {
         topic_id: topic.id,
         count: 3,
@@ -59,8 +59,6 @@ let perform = async (user, value) => {
     })
 
     await user.reply(enterResponse, { reply_markup: { hide_keyboard: true } })
-
-    await sleep(1000)
 
     Queue.enqueue('insight', {
       user_id: user.id,
@@ -83,7 +81,7 @@ let perform = async (user, value) => {
 // Leave
 //
 let leave = async (user) => {
-  user.setState({ context: null })
+  await user.setState({ context: null })
 }
 
 

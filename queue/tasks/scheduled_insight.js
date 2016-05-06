@@ -35,13 +35,13 @@ let perform = async (job, done) => {
 
     if (!insightEdge) {
       if (!user.state.schedule_done_sent) {
-        user.setState({ ...user.state, schedule_done_sent: true })
+        await user.setState({ ...user.state, schedule_done_sent: true })
         await user.reply(sample(Responses))
       }
       return done()
     }
 
-    user.setState({ ...user.state, schedule_done_sent: false })
+    await user.setState({ ...user.state, schedule_done_sent: false })
 
     await user.mutate('postponeInsightInTopic', {
       insight_id: insightEdge.node.id,
@@ -60,7 +60,7 @@ let perform = async (job, done) => {
       topic_id: insightEdge.topic.id,
       type: 'schedule'
     }
-    user.setState({ insights })
+    await user.setState({ insights })
 
   } catch (error) {
     console.error(chalk.green('Queue::ScheduledInsight'), chalk.red(error))

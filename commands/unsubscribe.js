@@ -78,7 +78,7 @@ let humanizeTopics = (topics) => {
 //
 let enter = async (user, options = {}) => {
   console.log(Command('Enter'), chalk.blue(user.id))
-  user.setState({ context: Context })
+  await user.setState({ context: Context })
   if (options.silent) return
 
   try {
@@ -142,7 +142,7 @@ let perform = async (user, value) => {
 
     // Unsubscribe
     //
-    await user.mutate('unsubscribeFromTopic', { topic_id: topic.id })
+    await user.mutate('unsubscribeFromTopic', { topic_id: topic.id }).catch(console.log)
     topics = await user.topics(true)
 
     if (topics.subscribedTopics.length == 0)
@@ -167,7 +167,7 @@ let perform = async (user, value) => {
 //
 let leave = async (user, options = {}) => {
   console.log(Command('Leave'), chalk.blue(user.id))
-  user.setState({ context: null })
+  await user.setState({ context: null })
   if (options.silent) return
 
   try {

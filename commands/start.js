@@ -23,14 +23,13 @@ const Commands = {
 }
 
 let perform = async (user, payload) => {
-  console.log(user, payload)
   if (user.state.initialized === true)
     return await user.reply(GreetingSetUp)
 
   await user.reply(GreetingNotSetUp)
 
   if (!user.state.context)
-    user.setState({ context: 'subscribe' })
+    await user.setState({ context: 'subscribe' })
 
   if (Commands[user.state.context])
     return await Commands[user.state.context].enter(user)

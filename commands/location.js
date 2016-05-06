@@ -37,7 +37,7 @@ const Responses = {
 // Enter
 //
 let enter = async (user, message, options = {}) => {
-  user.setState({ context: 'location' })
+  await user.setState({ context: 'location' })
 
   if (user.state.location)
     return await leave(user, message)

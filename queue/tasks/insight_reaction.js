@@ -62,7 +62,7 @@ let perform = async (job, done) => {
 
     insights[message_id].rate = rate
 
-    user.setState({ insights })
+    await user.setState({ insights })
 
     let replyMarkup = { inline_keyboard: [] }
 
@@ -74,18 +74,14 @@ let perform = async (job, done) => {
 
     switch (type) {
       case 'schedule':
-        await sleep(1000)
         await Queue.enqueue('scheduled_insight', { user_id })
         break
       case 'force':
         let limit = user.state.forced_insight || {}
 
         if (limit.count == 0 && limit.response) {
-          await sleep(1000)
           await user.reply(limit.response, { reply_markup: { hide_keyboard: true } })
         }
-
-        await sleep(1000)
 
         await Queue.enqueue('insight', { user_id, topic_id, type })
         break

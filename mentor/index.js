@@ -113,7 +113,7 @@ class Mentor {
   dislikeInsightInTopic = (topic_id, insight_id) =>
     this._request(dislikeInsightInTopic({ insight_id, topic_id }))
 
-  mutate = (name, payload) => this._request(mutations[name](payload))
+  mutate = (name, variables) => this._request(mutations[name], variables)
 
   query = (name, variables) => this._request(queries[name], variables)
 

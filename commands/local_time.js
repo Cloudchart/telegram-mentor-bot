@@ -41,7 +41,7 @@ const Responses = {
 
 
 let enter = async (user, options = {}) => {
-  user.setState({ context: 'local_time' })
+  await user.setState({ context: 'local_time' })
   return await user.reply(Responses.enter(user))
 }
 
@@ -67,14 +67,14 @@ let perform = async (user, value, options = {}) => {
 
   offset = offset * 60 + local_time.utcOffset()
 
-  user.setState({ utc_offset: offset })
+  await user.setState({ utc_offset: offset })
 
   await leave(user, options)
 }
 
 
 let leave = async (user, options = {}) => {
-  user.setState({ context: null, initialized: true })
+  await user.setState({ context: null, initialized: true })
 
   return await user.reply(Responses.leave(user))
 }
