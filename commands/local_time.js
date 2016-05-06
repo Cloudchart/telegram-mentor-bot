@@ -1,4 +1,5 @@
 import moment from 'moment'
+import Queue from '../queue'
 
 const TimeZone = process.env.TIME_ZONE || 'UTC'
 
@@ -75,6 +76,7 @@ let perform = async (user, value, options = {}) => {
 
 let leave = async (user, options = {}) => {
   await user.setState({ context: null, initialized: true })
+  await Queue.refresh(user)
 
   return await user.reply(Responses.leave(user))
 }

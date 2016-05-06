@@ -68,9 +68,10 @@ class User {
   }
 
   resetState = async () => {
+    await redis.del(this._stateKey)
     let nextState = { chat_id: this.state.chat_id }
-    this.setState(nextState)
-    return this.ensureState()
+    await this.setState(nextState)
+    return await this.ensureState()
   }
 
 

@@ -75,4 +75,5 @@ process.on('SIGTERM', shutdown)
 export default {
   start,
   enqueue,
+  refresh,
 }

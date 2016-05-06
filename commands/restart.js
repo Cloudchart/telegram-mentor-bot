@@ -1,5 +1,6 @@
 import chalk from 'chalk'
 
+import Queue from '../queue'
 import StartCommand from './start'
 import { protect } from './utils'
 
@@ -79,6 +80,7 @@ let leave = async (user, options = {}) => {
       await user.reply(Responses.leave_success)
 
       await resetUser(user)
+      await Queue.refresh(user)
 
       await StartCommand.perform(user)
     }
