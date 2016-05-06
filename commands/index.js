@@ -11,10 +11,11 @@ import hello from './hello'
 import bullshit from './bullshit'
 
 import help from './help'
+import mentor from './mentor'
 
 import restart from './restart'
 
-export default {
+let commands = {
   '/start': start,
 
   '/advice': advice,
@@ -50,3 +51,7 @@ export default {
   '/help': help,
   'help': help
 }
+
+commands[mentor.contextName()] = mentor
+
+export default commands

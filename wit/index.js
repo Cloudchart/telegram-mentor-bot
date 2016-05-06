@@ -24,6 +24,10 @@ const KnownIntents = {
 
   'help': {
     command: 'help'
+  },
+
+  'mentor': {
+    command: 'mentor'
   }
 }
 
