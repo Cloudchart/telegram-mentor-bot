@@ -21,7 +21,7 @@ const Queue = kue.createQueue({ prefix: 'queue:' + process.env.REDIS_PREFIX })
 
 Object.keys(tasks).forEach(name => {
   console.log(chalk.green('Queue: setting up task'), chalk.blue(name))
-  Queue.process(name, tasks[name].perform)
+  Queue.process(name, tasks[name].parallel || 1, tasks[name].perform)
 })
 
 
@@ -56,7 +56,14 @@ let enqueue = (name, payload) => {
   let job = Queue.create(name, restOfPayload)
     .removeOnComplete(true)
     .delay(__delay || 0)
-    .save()
+
+  if (tasks[name].onEnqueue)
+    job.on('enqueue', tasks[name].onEnqueue)
+
+  if (tasks[name].onComplete)
+    job.on('complete', tasks[name].onComplete)
+
+  return job.save()
 }
 
 

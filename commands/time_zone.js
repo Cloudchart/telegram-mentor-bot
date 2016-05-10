@@ -81,9 +81,9 @@ let perform = async (user, value, options = {}) => {
     if (!local_time)
       return await user.reply(Responses.perform_error(value), ReplyMarkup)
 
-    local_time = moment(local_time, 'HH:mm').startOf('hour')
-    let now = moment().startOf('hour')
-    let utc_offset = now.diff(local_time, 'hours')
+    let server_time = moment.utc().startOf('hour')
+    let client_time = moment.utc(local_time, 'HH:mm').startOf('hour')
+    let utc_offset = client_time.diff(server_time, 'hours')
 
     if (utc_offset > 12)
       utc_offset = 24 - utc_offset
@@ -91,7 +91,7 @@ let perform = async (user, value, options = {}) => {
     if (utc_offset < -12)
       utc_offset = 24 + utc_offset
 
-    utc_offset = utc_offset * 60 + now.utcOffset()
+    utc_offset = utc_offset * 60
 
     await user.setState({ utc_offset })
 

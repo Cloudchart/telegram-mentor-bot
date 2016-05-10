@@ -31,7 +31,8 @@
   },
   "scripts": {
     "bot": "babel-node index",
-    "test": "babel-node test"
+    "test": "babel-node test",
+    "mentor": "node bin/bot"
   },
   "author": "",
   "license": "ISC"
