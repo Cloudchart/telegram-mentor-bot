@@ -15,6 +15,8 @@ import mentor from './mentor'
 
 import restart from './restart'
 
+import settings from './settings'
+
 let commands = {
   '/start': start,
 
@@ -45,8 +47,7 @@ let commands = {
 
   'bullshit': bullshit,
 
-  // '/restart': restart,
-  // 'restart': restart,
+  '/settings': settings,
 
   '/help': help,
   'help': help

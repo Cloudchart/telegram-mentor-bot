@@ -1,6 +1,10 @@
 import chalk from 'chalk'
 import Queue from '../queue'
 
+import {
+  humanizeTopics
+} from '../utils'
+
 const Command = (name) => chalk.green(`Commands::Unsubscribe::${name}`)
 const Context = 'unsubscribe'
 
@@ -64,14 +68,6 @@ const Responses = {
 
 let topicsKeyboard = (topics) => {
   return [['Done']].concat(topics.map(topic => [topic.name]))
-}
-
-
-let humanizeTopics = (topics) => {
-  let names = topics.map(topic => `*${topic.name}*`)
-  let head = names.slice(0, topics.length - 1).join(', ')
-  let tail = names[names.length - 1]
-  return [head, tail].join(' and ')
 }
 
 
