@@ -1,5 +1,7 @@
 import time from './time'
+import setup from './setup'
 
 export default {
-  time
+  time,
+  setup,
 }

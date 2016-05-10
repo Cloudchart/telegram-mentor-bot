@@ -1,8 +1,10 @@
+import Immutable from 'immutable'
+
 import Commands from '../commands'
 
 let knownNames = []
 
-let create = ({ name, commands, responses, leave }) => {
+let create = ({ name, commands, responses, overrides, leave }) => {
 
   if (knownNames.indexOf(name) !== -1)
     throw new Error(`Execution Chain ${name} already exists.`)
@@ -15,10 +17,10 @@ let create = ({ name, commands, responses, leave }) => {
       throw new Error(`Execution Chain ${name} response ${responseName} type should be function. Got ${ typeof responses[responseName] }.`)
 
 
-  let next = async (user) => {
+  let next = async (user, from_context) => {
     await user.setState({ execution_chain: name })
 
-    let commandIndex = commands.indexOf(user.state.context)
+    let commandIndex = commands.indexOf(user.state.context || from_context)
 
     // Leave
     //
@@ -45,7 +47,7 @@ let create = ({ name, commands, responses, leave }) => {
       : responses[`from_${commands[commandIndex]}_to_${commands[commandIndex + 1]}`]
 
     if (response)
-      response = response(user)
+      response = await response(user)
 
     await Commands[commands[commandIndex + 1]].perform(user, null, { response })
 
@@ -53,6 +55,7 @@ let create = ({ name, commands, responses, leave }) => {
 
 
   return {
+    overrides: Immutable.fromJS(overrides || {}),
     next
   }
 

@@ -33,8 +33,10 @@ class User {
     this.state = null
   }
 
-  isInitialized = () =>
-    this.state.initialized === true
+  isInitialized = async () => {
+    let { subscribedTopics } = await this.topics()
+    return subscribedTopics.length > 0 && this.state.utc_offset
+  }
 
   // State handling
   //

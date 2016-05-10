@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import Queue from '../queue'
 
 const Command = (name) => chalk.green(`Commands::Unsubscribe::${name}`)
 const Context = 'unsubscribe'
@@ -183,6 +184,8 @@ let leave = async (user, options = {}) => {
         reply_markup: { hide_keyboard: true }
       })
     }
+
+    await Queue.refresh(user)
 
   } catch(error) {
     console.log(Command('Leave'), chalk.red(error))

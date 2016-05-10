@@ -1,40 +1,19 @@
-import SubscribeCommand from './subscribe'
-import StartTimeCommand from './start_time'
-import FinishTimeCommand from './finish_time'
-import LocalTimeCommand from './local_time'
+import Setup from '../execution_chains/setup'
 
-const GreetingNotSetUp = `
-Hello, meatb…, Master. I am your MentorBot, here to give you actionable startup advice.
-`
-
-const GreetingSetUp = `
-At your command, Master.
-`
-
-const SomethingWentWrong = `
-Something went wrong, Master.
-`
-
-const Commands = {
-  'subscribe': SubscribeCommand,
-  'start_time': StartTimeCommand,
-  'finish_time': FinishTimeCommand,
-  'local_time': LocalTimeCommand,
-}
+import {
+  humanizeTopics
+} from '../utils'
 
 let perform = async (user, payload) => {
-  if (user.state.initialized === true)
-    return await user.reply(GreetingSetUp)
+  if (await user.isInitialized()) {
 
-  await user.reply(GreetingNotSetUp)
+    let { subscribedTopics } = await user.topics()
+    await user.reply(`I am fully operational now. I will give you advice on ${humanizeTopics(subscribedTopics)} from ${user.state.start_time} till ${user.state.finish_time}. You can always change this in /settings.`)
 
-  if (!user.state.context)
-    await user.setState({ context: 'subscribe' })
-
-  if (Commands[user.state.context])
-    return await Commands[user.state.context].enter(user)
-
-  await user.reply(SomethingWentWrong)
+  } else {
+    await user.reply(`Hello, meatb…, Master. I am your MentorBot, here to give you actionable startup advice.`)
+    return await Setup.next(user)
+  }
 }
 
 export default {

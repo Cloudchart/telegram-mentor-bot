@@ -98,10 +98,10 @@ let perform = async (user, value, options = {}) => {
 let leave = async (user, options = {}) => {
   await protect(Command('Leave', user.id), async () => {
 
-    if (user.state.execution_chain)
-      return await ExecutionChains[user.state.execution_chain].next(user)
-
     await user.setState({ context: null })
+
+    if (user.state.execution_chain)
+      return await ExecutionChains[user.state.execution_chain].next(user, 'start_time')
 
     await user.reply(options.response || Responses.leave(user.state.start_time), HideReplyMarkup)
 

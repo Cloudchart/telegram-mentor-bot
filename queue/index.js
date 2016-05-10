@@ -46,8 +46,12 @@ let refresh = async (user) => {
       await job.removeAsync()
   }
 
-  if (user.isInitialized())
+  if (await user.isInitialized()) {
+    console.log(chalk.green('Queue::Refresh'), chalk.blue(user.id), chalk.green('setup schedule'))
     enqueue('schedule', { user_id: user.id })
+  } else {
+    console.log(chalk.green('Queue::Refresh'), chalk.blue(user.id), chalk.red('clear schedule'))
+  }
 }
 
 

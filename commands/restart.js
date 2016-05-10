@@ -1,5 +1,6 @@
 import Command from './command'
 import Queue from '../queue'
+import Commands from '../commands'
 
 
 const ConfirmationMessage = 'YES'
@@ -11,12 +12,8 @@ const Responses = {
   `
   ,
 
-  // leave_success: `
-  //   Reset sequence commencing...
-  // `,
-
   leave_success: `
-    It's broken at the moment. Will be fixed soon.
+    Reset sequence commencing...
   `,
 
   leave_failure: `
@@ -69,9 +66,10 @@ class RestartCommand extends Command {
 
 
   sideEffectsInLeave = async (user) => {
-    // if (!this.answer) return
-    // await resetUser(user)
-    // await Queue.refresh(user)
+    if (!this.answer) return
+    await resetUser(user)
+    await Queue.refresh(user)
+    await Commands['/start'].perform(user)
   }
 
 
