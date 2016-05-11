@@ -32,7 +32,7 @@ const Responses = Immutable.fromJS({
   },
 
   'leave': {
-    'no-slots': () => `No more subscription slots available. /unsubscribe?`,
+    'no-slots': () => `Learning requires focus. Since you humans aren’t equipped with laser pointing system like I am, a limit of 3 topics will be helpful.`,
     'already-subscribed': (user, topic) => `You have already subscribed to *${topic.name}*, Master.`,
     'done': async (user) => {
       let { subscribedTopics } = await user.topics()
