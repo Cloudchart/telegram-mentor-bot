@@ -5,22 +5,19 @@ import { sample } from '../utils'
 const Responses = [
   `Pleased to serve, human. Use my /settings to choose my topics and advice schedule. ` +
   `/subscribe or /unsubscribe from topics, and /changetime to adjust my schedule. ` +
-  `Say /advice to get one now. Or, use /support command to contact my human engineers.`
+  `Say /advice to get one now.`
   ,
   `As you wish, Master. I can give you advice on startup topics following a set schedule. ` +
   `Use my /settings to adjust them at any time. /subscribe or /unsubscribe from topics, ` +
-  `and /changetime to adjust my schedule. Ask for /advice to get one now. ` +
-  `Or, use /support command to contact my human engineers.`
+  `and /changetime to adjust my schedule. Ask for /advice to get one now.`
   ,
   `Pleased to serve, human. /subscribe to a daily dose of advice on my topics, or /unsubscribe ` +
   `if you don’t like it anymore. You can /changetime, when I send advice to you. In a hurry? ` +
-  `Ask /advice to get three advice on any selected topic right away. Need a warm analog human support? ` +
-  `Use /support command to contact my human engineers.`
+  `Ask /advice to get three advice on any selected topic right away. Need a warm analog human support?`
   ,
   `What would you like, Master? /subscribe to topics or /unsubscribe to change them. ` +
   `/changetime to let me know when I should send advice. ` +
-  `Say /advice or the name of a topic to get one now. ` +
-  `Or, use /support command to contact my human engineers.`
+  `Say /advice or the name of a topic to get one now.`
 ]
 
 
