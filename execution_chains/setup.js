@@ -51,12 +51,10 @@ export default ChainBuilder.create({
       `,
 
       from_time_zone: (user) =>
-        `I am now fully operational. ` +
-        `I will be giving you advice from *${ user.state.start_time }* ` +
-        `to *${ user.state.finish_time }*, ` +
-        `and your time zone is *${ timeZoneFromUTC(user.state.utc_offset) }*. ` +
-        `You can always change that in my settings.\n` +
-        `Say /advice if you need advice right away, /time to set advice schedule, /subscribe or /unsubscribe to change your topics, and I will be pleased to obey.`
+        `You’re doing impressively good for an organic life-form, Master 👏. ` +
+        `To get the most out of your mentoring, say /advice if you need advice right away, ` +
+        `/time to set advice schedule, /subscribe or /unsubscribe to change your topics 🚀. ` +
+        `Don’t forget to press “I’ll use it“ or “Skip“ to make me serve you better advice 🍰.`
   },
 
   leave: async (user) => {
