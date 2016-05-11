@@ -3,6 +3,7 @@ import Redis from 'ioredis'
 import kue from 'kue'
 import chalk from 'chalk'
 
+import Slack from '../slack'
 import User from '../user'
 import tasks from './tasks'
 
@@ -28,6 +29,8 @@ Object.keys(tasks).forEach(name => {
 let start = async () => {
   try {
 
+    await refreshDailyStats()
+
     for (let id of await redis.smembers(':users'))
       await refresh(await User({ id }))
 
@@ -42,6 +45,7 @@ let refresh = async (user) => {
 
   for (let id of ids) {
     let job = await kue.Job.getAsync(id)
+
     if (job.type == 'schedule' && job.data.user_id == user.id)
       await job.removeAsync()
   }
@@ -52,6 +56,23 @@ let refresh = async (user) => {
   } else {
     console.log(chalk.green('Queue::Refresh'), chalk.blue(user.id), chalk.red('clear schedule'))
   }
+}
+
+
+let refreshDailyStats = async () => {
+  let ids = await Queue.delayedAsync()
+
+  for (let id of ids) {
+    let job = await kue.Job.getAsync(id)
+
+    if (job.type == 'daily_stats_schedule')
+      await job.removeAsync()
+
+    if (job.type == 'daily_stats_task')
+      await job.removeAsync()
+  }
+
+  enqueue('daily_stats_schedule', {})
 }
 
 

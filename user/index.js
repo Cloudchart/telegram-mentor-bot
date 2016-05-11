@@ -5,6 +5,7 @@ import Mentor from '../mentor'
 import Commands from '../commands'
 import Queries from '../queries'
 import wit from '../wit'
+import Slack from '../slack'
 
 import {
   getMessageCommand,
@@ -90,6 +91,10 @@ class User {
       if (!this.state.chat_id)
         await this.setState({ chat_id: message.chat.id })
 
+      await this.setState({
+        last_message_received_at: + moment.utc()
+      })
+
       let command = getMessageCommand(message)
 
       if (this.state.context) {
@@ -129,6 +134,10 @@ class User {
     await this.ensureState()
     if (!this.state.chat_id)
       await this.setState({ chat_id: callbackQuery.message.chat.id })
+
+    await this.setState({
+      last_callback_query_received_at: + moment.utc()
+    })
 
     let query = callbackQuery.data
 
@@ -211,6 +220,7 @@ class User {
     if (!this._viewer) {
       this._viewer = await this._mentor.viewer().catch(() => null)
       if (!this._viewer) {
+        await Slack.postNewUser(this._user)
         await this._mentor.createTelegramUser(this._user).catch(console.log)
         this._viewer = await this._mentor.viewer()
       }

@@ -23,6 +23,8 @@ const Responses = [
   `More advice coming. Keep on learning!`
 ]
 
+const FirstTimeResponse = ``
+
 
 let perform = async (job, done) => {
 
@@ -36,7 +38,14 @@ let perform = async (job, done) => {
     if (!insightEdge) {
       if (!user.state.schedule_done_sent) {
         await user.setState({ ...user.state, schedule_done_sent: true })
-        await user.reply(sample(Responses))
+        let response = sample(Responses)
+
+        if (!user.state.first_schedule_done_sent) {
+          await user.setState({ first_schedule_done_sent: true })
+          
+        }
+
+        await user.reply(response)
       }
       return done()
     }
