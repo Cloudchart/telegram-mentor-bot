@@ -79,15 +79,17 @@ let perform = async (job, done) => {
 
     let rateKind = rate == 1 ? 'positive' : 'negative'
     let rateKey = rateKind + '_rate_sent'
+    let delay = 0
 
     if (!user.state[rateKey]) {
       await user.setState({ [rateKey]: true })
       await user.reply(FirstTimeResponses[rateKind])
+      delay = 2 * 1000
     }
 
     switch (type) {
       case 'schedule':
-        await Queue.enqueue('scheduled_insight', { user_id })
+        await Queue.enqueue('scheduled_insight', { user_id, __delay: delay })
         break
       case 'force':
         let limit = user.state.forced_insight || {}
@@ -96,7 +98,7 @@ let perform = async (job, done) => {
           await user.reply(limit.response, { reply_markup: { hide_keyboard: true } })
         }
 
-        await Queue.enqueue('insight', { user_id, topic_id, type })
+        await Queue.enqueue('insight', { user_id, topic_id, type, __delay: delay })
         break
     }
 
