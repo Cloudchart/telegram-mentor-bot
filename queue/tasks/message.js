@@ -1,6 +1,10 @@
 import moment from 'moment'
 import chalk from 'chalk'
 
+import {
+  User
+} from '../../storage'
+
 import { sleep } from '../../utils'
 
 
@@ -10,11 +14,13 @@ let promises = {}
 let prepareExecutionContext = async (message) => {
   // Get User
   //
-  let user = null
+  let user = await User.fetch(message.from) // message.from
+
+  console.log(user)
 
   // Get Chat
   //
-  let chat = null
+  let chat = null // message.chat
 
   return { user, chat }
 }
