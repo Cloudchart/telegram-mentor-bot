@@ -23,6 +23,11 @@ let scheduleReplyMarkup = (rate) => ({
 })
 
 
+const FirstTimeResponses = {
+  'positive': `Got it, Master. I will remind you of this advice later, and will be sending more like this.`,
+  'negative': `Every time you skip an advice, God k… oh wait, wrong line. I learn from your reactions and will send you less advice like those you skip.`
+}
+
 
 let perform = async (job, done) => {
 
@@ -71,6 +76,14 @@ let perform = async (job, done) => {
     let text = `${ insightResponse(insight) }${ rate == 1 ? '👍' : '👎' }`
 
     await user.editMessageText(message_id, text, replyMarkup)
+
+    let rateKind = rate == 1 ? 'positive' : 'negative'
+    let rateKey = rateKind + '_rate_sent'
+
+    if (!user.state[rateKey]) {
+      await user.setState({ [rateKey]: true })
+      await user.reply(FirstTimeResponses[rateKind])
+    }
 
     switch (type) {
       case 'schedule':
