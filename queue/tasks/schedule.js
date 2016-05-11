@@ -19,10 +19,14 @@ let perform = async (job, done) => {
 
     let start = moment.utc(user.state.start_time, 'HH:mm').subtract(user.state.utc_offset, 'minutes')
     let finish = moment.utc(user.state.finish_time, 'HH:mm').subtract(user.state.utc_offset, 'minutes')
-    let now = moment.tz(process.env.TIME_ZONE || 'UTC').utc()
+    let now = moment.utc()
 
-    if (finish.isBefore(start)) finish.add(1, 'day')
-    if (now.isBefore(start) && !now.isAfter(finish)) now.add(1, 'day')
+    if (finish.isBefore(start) || finish.isSame(start)) finish.add(1, 'day')
+
+    if (now.isAfter(start) && now.isAfter(finish)) {
+      start.add(1, 'day')
+      finish.add(1, 'day')
+    }
 
 
     if (now.isBetween(start, finish)) {
