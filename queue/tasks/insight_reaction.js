@@ -24,7 +24,7 @@ let scheduleReplyMarkup = (rate) => ({
 
 
 const FirstTimeResponses = {
-  'positive': `Got it, Master. I will remind you of this advice later, and will be sending more like this.`,
+  'positive': `👌Got it, Master. I will remind you of this advice later, and will be sending more like this.`,
   'negative': `Every time you skip an advice, God k… oh wait, wrong line. I learn from your reactions and will send you less advice like those you skip.`
 }
 
