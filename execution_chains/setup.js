@@ -55,7 +55,8 @@ export default ChainBuilder.create({
         `I will be giving you advice from *${ user.state.start_time }* ` +
         `to *${ user.state.finish_time }*, ` +
         `and your time zone is *${ timeZoneFromUTC(user.state.utc_offset) }*. ` +
-        `You can always change that in my settings.`
+        `You can always change that in my settings.\n` +
+        `Say /advice if you need advice right away, /time to set advice schedule, /subscribe or /unsubscribe to change your topics, and I will be pleased to obey.`
   },
 
   leave: async (user) => {
