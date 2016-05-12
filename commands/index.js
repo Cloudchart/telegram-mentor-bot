@@ -17,6 +17,8 @@ import restart from './restart'
 
 import settings from './settings'
 
+import saved from './saved'
+
 let commands = {
   '/start': start,
 
@@ -50,7 +52,10 @@ let commands = {
   '/settings': settings,
 
   '/help': help,
-  'help': help
+  'help': help,
+
+  '/saved': saved,
+  'saved': saved,
 }
 
 // Restart

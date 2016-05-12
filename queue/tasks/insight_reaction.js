@@ -72,6 +72,7 @@ let perform = async (job, done) => {
     let replyMarkup = { inline_keyboard: [] }
 
     let insight = await user.query('Insight', { id: insight_id }).then(({ node }) => node)
+    await user.topics(true)
 
     let text = `${ insightResponse(insight) }${ rate == 1 ? '👍' : '👎' }`
 

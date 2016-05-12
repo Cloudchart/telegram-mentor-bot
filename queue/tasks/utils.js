@@ -24,5 +24,22 @@ export let insightMarkup = () => ({
   hide_keyboard: true,
 })
 
+export let savedInsightMarkup = ({ hasPreviousPage, hasNextPage }) => {
+  let buttons = []
+  if (hasPreviousPage)
+    buttons.push({ text: 'Back', callback_data: 'back' })
+  if (hasNextPage)
+    buttons.push({ text: 'Next', callback_data: 'next' })
+
+  if (buttons.length > 0)
+    buttons = [buttons]
+
+  return {
+    reply_markup: {
+      inline_keyboard: buttons
+    }
+  }
+}
+
 export let sample = (array) =>
   array[Math.round(Math.random() * (array.length - 1))]

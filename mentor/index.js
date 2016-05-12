@@ -48,6 +48,7 @@ const TopicsQuery = () => `
             name
             description
             isSubscribedByViewer
+            hasPositiveInsightsByViewer
           }
         }
       }

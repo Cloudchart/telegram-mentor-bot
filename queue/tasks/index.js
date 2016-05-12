@@ -8,6 +8,8 @@ import {
   daily_stats_schedule
 } from './daily_stats'
 
+import saved_insight from './saved_insight'
+
 export default {
   insight,
   schedule,
@@ -16,4 +18,5 @@ export default {
   message,
   daily_stats_task,
   daily_stats_schedule,
+  saved_insight,
 }
