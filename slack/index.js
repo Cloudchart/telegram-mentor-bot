@@ -42,7 +42,6 @@ let postDailyStats = async () => {
     },
     body: JSON.stringify({ text })
   })
-    .then(console.log)
     .catch(console.error)
 }
 
