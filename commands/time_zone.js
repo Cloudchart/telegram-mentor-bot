@@ -22,12 +22,12 @@ const ReplyMarkup = {
 const Responses = {
 
   enter: () => `
-    When should I start giving advice?
+    What is you local time?
   `,
 
   enter_has_time_zone: (time_zone) => `
-    Your current start time is *${time_zone}*.
-    When should I start giving advice?
+    Your current time zone is *${time_zone}*.
+    What is you local time?
 
     Or you can /cancel.
   `,
@@ -37,12 +37,12 @@ const Responses = {
   `,
 
   leave: (time_zone) => `
-    I will be giving you advice from *${time_zone}*
+    I will set your time zone to *${time_zone}*
   `,
 
   leave_cancel: (time_zone) =>  `
     Ok, then.
-    I will continue giving you advice from *${time_zone}*
+    I will leave your time zone as *${time_zone}*
   `
 
 }
