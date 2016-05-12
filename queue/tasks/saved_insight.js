@@ -1,3 +1,4 @@
+import moment from 'moment'
 import Redis from '../../redis'
 import User from '../../user'
 
@@ -44,6 +45,7 @@ let perform = async (job, done) => {
       user_id: job.data.user_id,
       type: 'saved-insight',
       cursor: edges[0].cursor,
+      updated_at: + moment.utc()
     })
 
   } catch(error) { console.log('error:', error, JSON.stringify(error, null, 2)) } finally { done() }
