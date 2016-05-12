@@ -10,25 +10,35 @@ const SendAt = '06:00'
 
 
 let perform_task = async (job, done) => {
-  await Slack.postDailyStats()
-  await Queue.enqueue('daily_stats_schedule', {})
-  done()
+  try {
+    await Slack.postDailyStats()
+    await Redis.hset(':bot', 'daily_stats_last_sent_at', + moment.utc())
+    await Queue.enqueue('daily_stats_schedule', {})
+  } catch (error) {
+    console.log(error)
+  } finally {
+    done()
+  }
 }
 
 
 let perform_schedule = async (job, done) => {
   try {
 
+    let lastSentAt = await Redis.hget(':bot', 'daily_stats_last_sent_at') || 0
     let sendAt = moment.utc(SendAt, 'HH:mm')
     let now = moment.utc()
 
     if (sendAt.isBefore(now))
       sendAt.add(24, 'hours')
 
-    // console.log(sendAt.diff(now))
-    console.log(chalk.green('Queue::Tasks::ScheduleDailyStats'), chalk.blue('in', moment.duration(sendAt.diff(now)).humanize()))
+    let delay = sendAt.diff(now)
+    if (now - lastSentAt > 24 * 60 * 60 * 1000)
+      delay = 0
 
-    await Queue.enqueue('daily_stats_task', { __delay: sendAt.diff(now) })
+    console.log(chalk.green('Queue::Tasks::ScheduleDailyStats'), chalk.blue('in', moment.duration(delay).humanize()))
+
+    await Queue.enqueue('daily_stats_task', { __delay: delay })
 
   } catch(error) {
 

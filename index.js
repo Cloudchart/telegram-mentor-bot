@@ -1,4 +1,10 @@
 import 'dotenv/config'
+import intel from 'intel'
+
+intel.basicConfig({
+  'format': '[%(date)s] %(name)s: %(message)s'
+})
+intel.console()
 
 import bot from './bot'
 import Mentor from './mentor'
@@ -8,6 +14,7 @@ import { dispatch } from './dispatcher'
 import { sleep } from './utils'
 
 import './telegram-bot'
+
 
 let lastUpdateId  = 0
 
