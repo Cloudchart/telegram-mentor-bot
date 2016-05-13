@@ -8,6 +8,11 @@ const KnownIntents = {
     command:  'advice'
   },
 
+  'saved advice': {
+    param:    'mentor_topics',
+    command:  'saved',
+  },
+
   'subscribe': {
     param:    'mentor_topics',
     command:  'subscribe'
