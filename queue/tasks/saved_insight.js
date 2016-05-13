@@ -32,6 +32,8 @@ let perform = async (job, done) => {
 
     let { pageInfo, edges } = await user.query('SavedInsight', { id: job.data.topic_id, first, last, before, after }).then(({ node }) => node.insights )
 
+    console.log(pageInfo, edges)
+
     let message = { message_id }
 
     if (!message_id)
