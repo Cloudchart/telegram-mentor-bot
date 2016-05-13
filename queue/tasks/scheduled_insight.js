@@ -42,7 +42,7 @@ let perform = async (job, done) => {
 
         if (!user.state.first_schedule_done_sent) {
           await user.setState({ first_schedule_done_sent: true })
-          
+
         }
 
         await user.reply(response)
@@ -72,7 +72,7 @@ let perform = async (job, done) => {
     await user.setState({ insights })
 
   } catch (error) {
-    console.error(chalk.green('Queue::ScheduledInsight'), chalk.red(error))
+    console.error(chalk.green('Queue::ScheduledInsight'), chalk.blue(user.id), chalk.red(error))
   }
 
   done()
