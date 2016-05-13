@@ -9,13 +9,11 @@ let Command = (name, ...rest) => chalk.green(`Command::Saved::${name}`, ...rest)
 const Responses = {
 
   enter: () => `
-    Choose a topic.
-    Or /cancel
+    Please choose a topic to see your saved advice
   `,
 
   enter_no_topic: (topicName) => `
-    I don't know about *${topicName}*. Choose a topic.
-    Or /cancel
+    You have no saved advice on *${topicName}*
   `,
 
   leave_cancel: () => `
@@ -27,7 +25,7 @@ const Responses = {
   `,
 
   leave_with_topic: (topic) => `
-    *${topic.name}*:
+    Ok, here’s the advice you saved on *${topic.name}*
   `
 
 }
@@ -40,7 +38,7 @@ let enter = async (user, options = {}) => {
 
     await user.reply(options.response || await Responses.enter(), {
       reply_markup: {
-        keyboard: options.topics.map(topic => [topic.name]),
+        keyboard: [['Done']].concat(options.topics.map(topic => [topic.name])),
         one_time_keyboard: true,
         resize_keyboard: true,
       }
@@ -64,7 +62,7 @@ let perform = async (user, value, options = {}) => {
 
     let query = value.toLowerCase()
 
-    if (query === '/cancel')
+    if (query === '/cancel' || query === 'done')
       return await leave(user, { ...options, response: await Responses.leave_cancel() })
 
     let topic = topics.find(topic => topic.name.toLowerCase() === query)
