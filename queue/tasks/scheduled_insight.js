@@ -38,6 +38,8 @@ let perform = async (job, done) => {
 
     let insightEdge = await user.query('SubscribedInsight').then(({viewer}) => viewer.insights.edges[0])
 
+    console.log(`ScheduledInsight:Perform:fetchedInsight: ${user.id} ${insightEdge}`)
+
     if (!insightEdge) {
       if (!user.state.schedule_done_sent) {
         await user.setState({ ...user.state, schedule_done_sent: true })
@@ -45,11 +47,11 @@ let perform = async (job, done) => {
 
         if (!user.state.first_schedule_done_sent) {
           await user.setState({ first_schedule_done_sent: true })
-
         }
 
         await user.reply(response)
       }
+      console.log(`ScheduledInsight:Perform: ${user.id} no insight, exiting...`)
       return
     }
 
@@ -60,10 +62,14 @@ let perform = async (job, done) => {
       topic_id: insightEdge.topic.id
     })
 
+    console.log(`ScheduledInsight:Perform: ${user.id} postponed insight...`)
+
     let message = await user.reply(
       insightResponse(insightEdge.node),
       insightMarkup()
     )
+
+    console.log(`ScheduledInsight:Perform: ${user.id} received message...`)
 
     let insights = { ...user.state.insights }
     insights[message.message_id] = {

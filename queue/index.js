@@ -82,12 +82,12 @@ let enqueue = (name, payload) => {
     .removeOnComplete(true)
     .delay(__delay || 0)
 
-  if (tasks[name].onEnqueue)
-    job.on('enqueue', tasks[name].onEnqueue)
-
-  if (tasks[name].onComplete)
-    job.on('complete', tasks[name].onComplete)
-
+  // if (tasks[name].onEnqueue)
+  //   job.on('enqueue', tasks[name].onEnqueue)
+  //
+  // if (tasks[name].onComplete)
+  //   job.on('complete', tasks[name].onComplete)
+  //
   return job.save()
 }
 
