@@ -1,3 +1,4 @@
+import Botan from 'botanio'
 import moment from 'moment'
 import Redis from 'ioredis'
 import bot from '../bot'
@@ -11,6 +12,8 @@ import {
   getMessageCommand,
   sleepForUser
 } from '../utils'
+
+let botan = Botan(process.env.BOTAN_TOKEN)
 
 
 let redis = new Redis({ keyPrefix: process.env.REDIS_PREFIX })
@@ -84,6 +87,8 @@ class User {
   // Handle message
   //
   handleMessage = async (message) => {
+
+    botan.track(message)
 
     try {
       await this.ensureUser()
