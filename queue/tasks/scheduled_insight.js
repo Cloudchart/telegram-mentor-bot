@@ -28,10 +28,13 @@ const FirstTimeResponse = ``
 
 let perform = async (job, done) => {
 
+  let t1 = + new Date
+  let { user_id } = job.data
+  let user = await User({ id: user_id })
+  console.log(`ScheduledInsight:Perform:entered: ${user.id}`)
+
   try {
 
-    let { user_id } = job.data
-    let user = await User({ id: user_id })
 
     let insightEdge = await user.query('SubscribedInsight').then(({viewer}) => viewer.insights.edges[0])
 
@@ -47,7 +50,7 @@ let perform = async (job, done) => {
 
         await user.reply(response)
       }
-      return done()
+      return
     }
 
     await user.setState({ ...user.state, schedule_done_sent: false })
@@ -73,9 +76,11 @@ let perform = async (job, done) => {
 
   } catch (error) {
     console.error(chalk.green('Queue::ScheduledInsight'), chalk.blue(user.id), chalk.red(error))
+  } finally {
+    done()
+    let t2 = + new Date
+    console.log(`ScheduledInsight:Perform:exited: ${user.id}, ${t2 - t1}`)
   }
-
-  done()
 
 }
 
